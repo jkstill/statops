@@ -1,0 +1,82 @@
+
+
+create_stats_table.sh 
+tests good
+
+===========================================
+
+delete_stats.sh
+
+dictionary:
+
+  system         - works, but delete_system_stats does not actually
+                   work as expected. System statistics are deleted,
+                   but then repopulated with default values.
+						 see README
+  fixed_objects  - tested ok
+  dictionary     - tested ok
+  schema         - tested ok
+
+
+stats table:
+
+  system         - tested ok
+  fixed_objects  - tested ok
+  dictionary     - tested ok
+  schema         - tested ok
+
+===========================================
+
+exp_stats.sh - tested ok
+
+===========================================
+
+export_stats.sh
+
+  system         - tested ok
+  fixed_objects  - tested ok
+  dictionary     - tested ok
+  schema         - tested ok
+
+===========================================
+
+import_stats.sh
+
+TODO : import_stats.sql - then import stats back into dv11 - system, dict and fixed
+
+  system         - tested ok - see README regarding possible errors
+  fixed_objects  - tested ok
+  dictionary     - tested ok
+  schema         - tested ok
+
+===========================================
+
+gather_fixed_objects_stats.sh 
+
+  stats table - tested ok
+  data dictionary - tested ok
+
+===========================================
+
+gather_dictionary_stats.sh 
+
+===========================================
+gather_schema_stats.sh - tested ok
+
+===========================================
+
+gather_system_stats_noworkload.sql - tested ok
+
+===========================================
+
+gather_system_stats_workload.sql - tested ok
+
+===========================================
+
+imp_stats.sh - tested ok
+
+===========================================
+
+list_stats.sh - tested ok
+
+===========================================

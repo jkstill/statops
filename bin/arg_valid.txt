@@ -1,0 +1,66 @@
+# argument validation section 
+# concat all args together
+
+# convert noinvalidate to YES or NO as that is what sql scripts expect
+# default is YES - I just love negative logic...
+case $NOINVALIDATE in
+	n|N|no|NO|No) NOINVALIDATE='NO';;
+	*) NOINVALIDATE='YES';;
+esac
+#echo NOINVALIDATE: $NOINVALIDATE
+
+# convert force delete to YES or NO as that is what sql scripts expect
+# default is NO 
+case $FORCE_DELETE in
+	y|Y|yes|YES|Yes) FORCE_DELETE='YES';;
+	*) FORCE_DELETE='NO';;
+esac
+#echo FORCE_DELETE: $FORCE_DELETE
+
+ALLARGS=":$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$SCHEMA:$STATS_TYPE:$STATID:$NOINVALIDATE:$FORCE_DELETE:$ORACLE_SID:"
+# upper case args
+ALLARGS=$(upperCase $ALLARGS)
+
+# components of RE 
+export ALNUM1="[[:alnum:]]+"
+export ALNUM3="[[:alnum:]]{3,}"
+export USER_RE='[[:alnum:]_$]+'
+export DATABASE_RE=$ALNUM3
+export OWNER_RE='[[:alnum:]_$]+'
+export TABLE_RE='[[:alnum:]_#$]+'
+export SCHEMA_RE='[[:alnum:]_$]+'
+export NOINV_RE='([YyNn]|YES|yes|NO|no)'
+export FORCE_RE='([YyNn]|YES|yes|NO|no)'
+export STATID_RE='[[:alnum:]_$]+'
+
+
+# bash
+# order of argument regexs
+# delete non-schema stats from dictionary
+# delete non-schema stats from stats table
+# delete schema stats from dictionary
+# delete schema stats from stats table
+# delete schema stats from dictionary
+# :$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$SCHEMA:$STATS_TYPE:$STATID:$NOINVALIDATE:$ORACLE_SID:"
+VALID_ARGS=(
+":$USER_RE:$DATABASE_RE::::(DICTIONARY_STATS|SYSTEM_STATS|FIXED_OBJECTS_STATS)::$NOINV_RE:$FORCE_RE:$DATABASE_RE:" \
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE::(DICTIONARY_STATS|SYSTEM_STATS|FIXED_OBJECTS_STATS):$STATID_RE:$NOINV_RE:$FORCE_RE:$DATABASE_RE:" \
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$SCHEMA_RE:(SCHEMA):$STATID_RE:$NOINV_RE:$FORCE_RE:$DATABASE_RE:" \
+":$USER_RE:$DATABASE_RE:::$SCHEMA_RE:(SCHEMA)::$NOINV_RE:$FORCE_RE:$DATABASE_RE:" \
+)
+
+validate_args $ALLARGS ${VALID_ARGS[*]}
+ARG_RESULT=$?
+
+
+if [ "$ARG_RESULT" != '0' ]; then
+	usage
+	[ "$ECHO_ARGS" == 'YES' ] && {
+		echo "ARG_RESULT: $ARG_RESULT"
+		echo "ALLARGS: $ALLARGS"
+		echo "VALID_ARGS: ${VALID_ARGS[*]}"
+	}
+	exit 1
+fi
+
+# end of argument validation

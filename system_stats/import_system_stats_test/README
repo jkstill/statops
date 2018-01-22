@@ -1,0 +1,149 @@
+
+test the use of dbms_stats.import_system_stats to ensure
+it does not do anything silly, such as overwriting an OS
+value when the value in the stat table is NULL.
+
+==================================
+== Backup current system stats:
+==================================
+
+create_stat_table.sh -o dv11 -d dv11 -u js001292 -n js001292 -t iss_system_bkup
+
+export_stats.sh -o dv11 -d dv11 -u js001292 -n js001292 -t iss_system_bkup -T SYSTEM_STATS
+
+## Compare current stats to backed up stats
+
+SQL: /home/jkstill/oracle/dba/statistics/dbms_stats/system_stats/system_stats_query.sql
+modify the SQL to use table ISS_SYSTEM_BKUP
+
+SQL> @system_stats_query
+
+                                                                  SREADTIM  MREADTIM CPUSPEED   MBRC
+STATID                         START_TIME       END_TIME                ms        ms      MHZ BLOCKS     MAXTHR   SLAVETHR
+------------------------------ ---------------- ---------------- --------- --------- -------- ------ ---------- ----------
+SYST_DV11_200909281334         09-28-2009 10:28 09-28-2009 10:28                                       10000000
+
+1 row selected.
+
+(sreadtim,mreadtim and cputime are not set in this test system)
+
+## compare to OS Stats
+
+SQL> @show_os_stats
+
+SNAME                          PNAME                                         PVAL1 PVAL2
+------------------------------ ------------------------------ -------------------- ------------------------------
+SYSSTATS_INFO                  DSTART                                              09-28-2009 10:28
+SYSSTATS_INFO                  DSTOP                                               09-28-2009 10:28
+SYSSTATS_INFO                  FLAGS                                        1.0000
+SYSSTATS_INFO                  STATUS                                              COMPLETED
+SYSSTATS_MAIN                  CPUSPEED
+SYSSTATS_MAIN                  CPUSPEEDNW                               1,238.1670
+SYSSTATS_MAIN                  IOSEEKTIM                                   10.0000
+SYSSTATS_MAIN                  IOTFRSPEED                               4,096.0000
+SYSSTATS_MAIN                  MAXTHR                              10,000,000.0000
+SYSSTATS_MAIN                  MBRC
+SYSSTATS_MAIN                  MREADTIM
+SYSSTATS_MAIN                  SLAVETHR
+SYSSTATS_MAIN                  SREADTIM
+
+13 rows selected.
+
+==================================
+== Set sreadtim and mreadtim
+==================================
+
+begin
+	dbms_stats.set_system_stats('sreadtim',1);
+	commit;
+end;
+/
+
+
+## check OS stats again
+SQL> @show_os_stats
+
+SNAME                          PNAME                                         PVAL1 PVAL2
+------------------------------ ------------------------------ -------------------- ------------------------------
+SYSSTATS_INFO                  DSTART                                              09-28-2009 13:51
+SYSSTATS_INFO                  DSTOP                                               09-28-2009 13:51
+SYSSTATS_INFO                  FLAGS                                        1.0000
+SYSSTATS_INFO                  STATUS                                              COMPLETED
+SYSSTATS_MAIN                  CPUSPEED
+SYSSTATS_MAIN                  CPUSPEEDNW                               1,238.1670
+SYSSTATS_MAIN                  IOSEEKTIM                                   10.0000
+SYSSTATS_MAIN                  IOTFRSPEED                               4,096.0000
+SYSSTATS_MAIN                  MAXTHR                              10,000,000.0000
+SYSSTATS_MAIN                  MBRC
+SYSSTATS_MAIN                  MREADTIM                                     2.0000
+SYSSTATS_MAIN                  SLAVETHR
+SYSSTATS_MAIN                  SREADTIM                                     1.0000
+
+13 rows selected.
+
+
+==================================
+== import new stats
+==================================
+
+## Now create a new table from ISS_SYSTEM_BKUP:
+
+SQL> create table ISS_SYSTEM_TEST as select * from ISS_SYSTEM_BKUP;
+
+## Now modify the mreadtim value in ISS_SYSTEM_BKUP
+
+SQL> update iss_system_test set n2 = 4 where c4 = 'CPU_SERIO';
+SQL> commit;
+
+SQL> @ssq
+                                                                  SREADTIM  MREADTIM CPUSPEED   MBRC
+STATID                         START_TIME       END_TIME                ms        ms      MHZ BLOCKS     MAXTHR   SLAVETHR
+------------------------------ ---------------- ---------------- --------- --------- -------- ------ ---------- ----------
+SYST_DV11_200909281334         09-28-2009 10:28 09-28-2009 10:28             4.00000                   10000000
+
+1 row selected.
+
+## mreadtim is 4 ms as set earlier.
+
+## The test will be considered successful if the OS Stats mreadtim=4 and sreadtim=1 after the import
+
+declare 
+	v_statid iss_system_test.statid%type;
+begin
+	select distinct statid into v_statid
+	from iss_system_test;
+
+	dbms_stats.import_system_stats(
+		stattab => 'ISS_SYSTEM_TEST',
+		statid => v_statid,
+		statown => user
+	);
+
+end;
+/
+
+ SQL> @show_os_stats
+
+ SNAME                          PNAME                                         PVAL1 PVAL2
+ ------------------------------ ------------------------------ -------------------- ------------------------------
+ SYSSTATS_INFO                  DSTART                                              09-28-2009 10:28
+ SYSSTATS_INFO                  DSTOP                                               09-28-2009 10:28
+ SYSSTATS_INFO                  FLAGS                                        1.0000
+ SYSSTATS_INFO                  STATUS                                              COMPLETED
+ SYSSTATS_MAIN                  CPUSPEED
+ SYSSTATS_MAIN                  CPUSPEEDNW                               1,238.1670
+ SYSSTATS_MAIN                  IOSEEKTIM                                   10.0000
+ SYSSTATS_MAIN                  IOTFRSPEED                               4,096.0000
+ SYSSTATS_MAIN                  MAXTHR                              10,000,000.0000
+ SYSSTATS_MAIN                  MBRC
+ SYSSTATS_MAIN                  MREADTIM                                     4.0000
+ SYSSTATS_MAIN                  SLAVETHR
+ SYSSTATS_MAIN                  SREADTIM                                     1.0000
+
+ 13 rows selected.
+
+
+All seems to work as expected.
+
+
+

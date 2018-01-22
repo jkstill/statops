@@ -1,0 +1,11 @@
+
+Is the incremental pref for an index inherited from the table?
+
+There is no dbms_stats.set_index_prefs, but yet the pref can be 
+retrieved with dbms_stats.get_prefs.
+
+The answer is that to see the incremental you must get_prefs for a table.
+
+See Oracle Note
+  DBMS_STATS.SET_SCHEMA_PREFS does not feedback the current configuration values after setting it [ID 1338709.1]
+

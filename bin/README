@@ -1,0 +1,166 @@
+
+Some of these are SAP specific
+see ./sap_dict_stats/README as well
+
+see ../system_stats/README for system statistics
+
+create_stat_table.sh - create the stats table
+create_stat_table.sql - called by create_stat_table.sh
+
+delete.sql - delete stats from stats table
+
+export_stats.sql - export the stats to the stats table
+             caution - overwrites stats in the stats table
+
+import_stats.sql - import the stats from the stats table
+             to the data dictionary
+
+exp_stats.sh - export the stats table to load into another database
+imp_stats.sh - import the stats table
+
+--------------------------------------------------------
+
+################################
+Gather System Stats
+################################
+
+The gather_stats jobs for system, dictionary and fixed objects
+when used with a stats table appear to do the same thing as
+the corresponding export_stats jobs.
+
+One primary difference is the that the 'GATHER' procedures
+have a no_invalidate argument.  This allows gathering current
+statistics into a statistics table created by the 
+create_stat_table procedure, without invalidating current cursors.
+
+These stats could then be exported to another system for testing,
+and then imported into the production system directly from the
+stattab table.
+
+The script stats_proc_diff.sql can be used to show the additional
+arguments in the gather_ procedures.
+
+################################
+Delete_System_Stats
+################################
+
+While the delete_fixed_objects_stats and delete_dictionary_stats 
+procedures work like you might expect, the delete_system_stats
+procedure does not.
+
+The stats are deleted, but then reinserted, and the timestamp updated.
+
+This can be seen from the trace file ../trace/delete_system_stats.
+
+Before and after snapshots of the sys.aux_stats$ table were also created
+to show the difference.
+
+
+  create table aux_stats_before
+  as
+  select * from sys.aux_stats$;
+
+Now run dbms_stats.delete_system_stats, then create another snapshot
+
+  create table aux_stats_after
+  as
+  select * from sys.aux_stats$;
+
+Now find the difference
+
+  select * from aux_stats_after
+  minus
+  select * from aux_stats_before
+  order by 1,2
+
+SNAME           PNAME           PVAL1 PVAL2
+--------------- ---------- ---------- ------------------------------
+SYSSTATS_INFO   DSTART                08-14-2009 15:04
+SYSSTATS_INFO   DSTOP                 08-14-2009 15:04
+
+2 rows selected.
+
+The only difference is the timestamp.
+Here are the details
+
+  select * from aux_stats_after
+  union all
+  select * from aux_stats_before
+  order by 1,2
+
+
+SNAME           PNAME                PVAL1 PVAL2
+--------------- ---------- --------------- ------------------------------
+SYSSTATS_INFO   DSTART                     08-14-2009 15:04
+SYSSTATS_INFO   DSTART                     08-14-2009 14:57
+SYSSTATS_INFO   DSTOP                      08-14-2009 14:57
+SYSSTATS_INFO   DSTOP                      08-14-2009 15:04
+SYSSTATS_INFO   FLAGS                    0
+SYSSTATS_INFO   FLAGS                    0
+SYSSTATS_INFO   STATUS                     COMPLETED
+SYSSTATS_INFO   STATUS                     COMPLETED
+SYSSTATS_MAIN   CPUSPEED
+SYSSTATS_MAIN   CPUSPEED
+SYSSTATS_MAIN   CPUSPEEDNW             382
+SYSSTATS_MAIN   CPUSPEEDNW             382
+SYSSTATS_MAIN   IOSEEKTIM               10
+SYSSTATS_MAIN   IOSEEKTIM               10
+SYSSTATS_MAIN   IOTFRSPEED            4096
+SYSSTATS_MAIN   IOTFRSPEED            4096
+SYSSTATS_MAIN   MAXTHR
+SYSSTATS_MAIN   MAXTHR
+SYSSTATS_MAIN   MBRC
+SYSSTATS_MAIN   MBRC
+SYSSTATS_MAIN   MREADTIM
+SYSSTATS_MAIN   MREADTIM
+SYSSTATS_MAIN   SLAVETHR
+SYSSTATS_MAIN   SLAVETHR
+SYSSTATS_MAIN   SREADTIM
+SYSSTATS_MAIN   SREADTIM
+
+26 rows selected.
+
+The only difference is the timestamps
+
+This is on 10.2.0.4 on RH Linux
+
+
+################################
+Import_Dictionary_Stats
+################################
+
+It is possible to get an error while importing dictionary stats
+
+ERROR at line 1:
+ORA-20000: partition "WRH$_ACTIVE_57145378_23121" of table
+"SYS"."WRH$_ACTIVE_SESSION_HISTORY" does not exist or insufficient privileges
+ORA-06512: at "SYS.DBMS_STATS", line 6824
+ORA-06512: at "SYS.DBMS_STATS", line 6850
+ORA-06512: at "SYS.DBMS_STATS", line 16386
+ORA-06512: at line 47
+
+See the following Article for an explanation and corrective action
+
+730837.1 -  ORA-20000 on DBMS_STATS.IMPORT_DICTONARY_STATS after AWR Partitions Purged
+
+This example DML will remove stats for all partitions that no longer
+exist in the schema:
+
+STATID=DICT_DV11_200908121442
+TABLE=WRH$_ACTIVE_SESSION_HISTORY
+
+delete from stats_table where statid = 'DICT_DV11_200908121442'
+and c2 not in (
+  select partition_name
+  from dba_tab_partitions
+  where table_owner = 'SYS'
+  and table_name = 'WRH$_ACTIVE_SESSION_HISTORY'
+)
+
+
+
+
+
+
+
+

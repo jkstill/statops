@@ -1,0 +1,49 @@
+
+
+Values for the columns when stats are created in a user table
+eg.
+
+
+
+DBMS_STATS.GATHER_SYSTEM_STATS (
+        gathering_mode => 'INTERVAL',
+        interval => 1,
+        stattab => 'SYSTEM_STATS',
+        statid => 'ST' || to_Char(sysdate,'yyyymmddhh24miss'),
+        statown => 'JKSTILL'
+);
+
+
+
+c4 = 'CPU_SERIO'
+
+
+c1 STATUS
+c2 DSTART
+c3 DSTOP
+c4 STATROW
+n1 SREADTIM
+n2 MREADTIM
+n3 CPUSPEED
+n4 SBLKRDS
+n5 SBLKRDTIM
+n6 MBLKRDS
+n7 MBLKRDTIM
+n8 CPUCYCLES
+n9 CPUTIM
+n10 JOB
+n11 MBRC
+n12 MBRTOTAL
+d1  TIMESTAMP
+
+
+c4 = 'PARIO'
+
+c4 STATROW
+n1 MAXTHR
+n2 SLAVETHR
+n3 IOSEEKTIM
+n4 IOTFRSPEED
+n5 CPUSPEEDNW
+n6 CACHE_JOB
+d1 TIMESTAMP

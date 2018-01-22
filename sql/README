@@ -1,0 +1,18 @@
+
+Some of these are SAP specific
+see ./sap_dict_stats/README as well
+
+create_stats_table.sh - create the stats table
+create_stats_table.sql - called by create_stats_table.sh
+
+delete.sql - delete stats from stats table
+
+export_stats.sql - export the stats to the stats table
+             caution - overwrites stats in the stats table
+
+import_stats.sql - import the stats from the stats table
+             to the data dictionary
+
+exp_stats.sh - export the stats table to load into another database
+imp_stats.sh - import the stats table
+

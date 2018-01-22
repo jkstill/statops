@@ -1,0 +1,337 @@
+/u01/app/oracle/admin/ts20/udump/ts20_ora_4266.trc
+Oracle Database 10g Enterprise Edition Release 10.2.0.3.0 - Production
+With the Partitioning and Data Mining options
+ORACLE_HOME = /u01/app/oracle/product/10gR2/ts20
+System name:	Linux
+Node name:	poirot
+Release:	2.6.13-15.16-default
+Version:	#1 Fri Jun 8 15:35:39 UTC 2007
+Machine:	i686
+Instance name: ts20
+Redo thread mounted by this instance: 1
+Oracle process number: 20
+Unix process pid: 4266, image: oracle@poirot (TNS V1-V3)
+
+*** 2009-08-14 14:57:08.129
+*** SERVICE NAME:(SYS$USERS) 2009-08-14 14:57:08.128
+*** SESSION ID:(87.24394) 2009-08-14 14:57:08.128
+WAIT #1: nam='SQL*Net message to client' ela= 6 driver id=1650815232 #bytes=1 p3=0 obj#=-1 tim=1220983425906935
+WAIT #1: nam='SQL*Net message from client' ela= 28496 driver id=1650815232 #bytes=1 p3=0 obj#=-1 tim=1220983425935879
+=====================
+PARSING IN CURSOR #23 len=52 dep=0 uid=0 oct=47 lid=0 tim=1220983425936251 hv=1029988163 ad='2c223ee4'
+BEGIN DBMS_OUTPUT.GET_LINES(:LINES, :NUMLINES); END;
+END OF STMT
+PARSE #23:c=0,e=103,p=0,cr=0,cu=0,mis=0,r=0,dep=0,og=1,tim=1220983425936242
+BINDS #23:
+kkscoacd
+ Bind#0
+  oacdty=123 mxl=4000(4000) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=00 fl2=1000000 frm=00 csi=00 siz=4000 off=0
+  kxsbbbfp=41011674  bln=4000  avl=00  flg=15
+ Bind#1
+  oacdty=02 mxl=22(22) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=01 fl2=1000000 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ee2438  bln=22  avl=22  flg=05
+  value=###
+  An invalid number has been seen.Memory contents are :
+Dump of memory from 0x40EE2438 to 0x40EE244E
+40EE2430                   000102C2 00000000          [........]
+40EE2440 00000000 00000000 00000000 00000000  [................]
+WAIT #23: nam='SQL*Net message to client' ela= 11 driver id=1650815232 #bytes=1 p3=0 obj#=-1 tim=1220983425937214
+EXEC #23:c=0,e=1076,p=0,cr=3,cu=0,mis=0,r=1,dep=0,og=1,tim=1220983425937558
+WAIT #23: nam='SQL*Net message from client' ela= 5310583 driver id=1650815232 #bytes=1 p3=0 obj#=-1 tim=1220983431248350
+=====================
+PARSING IN CURSOR #4 len=114 dep=0 uid=0 oct=47 lid=0 tim=1220983431248825 hv=1304655208 ad='2707c444'
+begin
+		DBMS_STATS.DELETE_SYSTEM_STATS (
+			stattab			=> null,
+			statid			=> null,
+			statown			=> null
+		);
+end;
+END OF STMT
+PARSE #4:c=0,e=144,p=0,cr=0,cu=0,mis=0,r=0,dep=0,og=1,tim=1220983431248813
+BINDS #4:
+BINDS #5:
+=====================
+PARSING IN CURSOR #5 len=107 dep=1 uid=0 oct=3 lid=0 tim=1220983431249461 hv=1435125888 ad='29275394'
+SELECT S.SNAME, S.PNAME, S.PVAL1, S.PVAL2 FROM AUX_STATS$ S WHERE S.SNAME LIKE 'SYSSTATS%' ORDER BY S.SNAME
+END OF STMT
+EXEC #5:c=0,e=101,p=0,cr=0,cu=0,mis=0,r=0,dep=1,og=1,tim=1220983431249452
+FETCH #5:c=0,e=149,p=0,cr=3,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431249704
+FETCH #5:c=0,e=9,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431249787
+FETCH #5:c=0,e=7,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431249837
+FETCH #5:c=0,e=7,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431249884
+FETCH #5:c=0,e=7,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431249929
+FETCH #5:c=0,e=7,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431249974
+FETCH #5:c=0,e=6,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431250017
+FETCH #5:c=0,e=7,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431250060
+FETCH #5:c=0,e=6,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431250102
+FETCH #5:c=0,e=6,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431250144
+FETCH #5:c=0,e=6,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431250186
+FETCH #5:c=0,e=6,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431250228
+FETCH #5:c=0,e=6,p=0,cr=0,cu=0,mis=0,r=1,dep=1,og=1,tim=1220983431250271
+FETCH #5:c=0,e=15,p=0,cr=0,cu=0,mis=0,r=0,dep=1,og=1,tim=1220983431250323
+BINDS #6:
+=====================
+PARSING IN CURSOR #6 len=56 dep=1 uid=0 oct=7 lid=0 tim=1220983431250985 hv=311428414 ad='2928b7a8'
+DELETE FROM SYS.AUX_STATS$ WHERE SNAME = 'SYSSTATS_INFO'
+END OF STMT
+EXEC #6:c=0,e=557,p=0,cr=3,cu=14,mis=0,r=4,dep=1,og=1,tim=1220983431250969
+BINDS #7:
+kkscoacd
+ Bind#0
+  oacdty=01 mxl=32(30) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=01 csi=873 siz=32 off=0
+  kxsbbbfp=40ec4548  bln=32  avl=09  flg=09
+  value="COMPLETED"
+=====================
+PARSING IN CURSOR #7 len=73 dep=1 uid=0 oct=2 lid=0 tim=1220983431251485 hv=454001916 ad='2928b58c'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_INFO', 'STATUS', NULL, :B1 )
+END OF STMT
+EXEC #7:c=0,e=328,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431251475
+BINDS #8:
+kkscoacd
+ Bind#0
+  oacdty=01 mxl=32(30) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=01 csi=873 siz=32 off=0
+  kxsbbbfp=40ec4568  bln=32  avl=16  flg=09
+  value="08-14-2009 14:57"
+=====================
+PARSING IN CURSOR #8 len=73 dep=1 uid=0 oct=2 lid=0 tim=1220983431281455 hv=3821777836 ad='2928b370'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_INFO', 'DSTART', NULL, :B1 )
+END OF STMT
+EXEC #8:c=4000,e=29839,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431281436
+BINDS #9:
+kkscoacd
+ Bind#0
+  oacdty=01 mxl=32(30) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=01 csi=873 siz=32 off=0
+  kxsbbbfp=40ec4588  bln=32  avl=16  flg=09
+  value="08-14-2009 14:57"
+=====================
+PARSING IN CURSOR #9 len=72 dep=1 uid=0 oct=2 lid=0 tim=1220983431281948 hv=912777027 ad='2928b154'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_INFO', 'DSTOP', NULL, :B1 )
+END OF STMT
+EXEC #9:c=0,e=254,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431281939
+BINDS #10:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec45a8  bln=22  avl=01  flg=09
+  value=0
+=====================
+PARSING IN CURSOR #10 len=72 dep=1 uid=0 oct=2 lid=0 tim=1220983431282291 hv=994138424 ad='2928af38'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_INFO', 'FLAGS', :B1 , NULL)
+END OF STMT
+EXEC #10:c=0,e=223,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431282282
+=====================
+PARSING IN CURSOR #1 len=266 dep=1 uid=0 oct=2 lid=0 tim=1220983431283460 hv=95472595 ad='261f7568'
+insert into sys.wri$_optstat_aux_history (savtime, sname, pname, pval1, pval2) select :1, sname, pname, pval1, pval2  from sys.aux_stats$ where sname = 'SYSSTATS_MAIN' and not exists  (select /*+index(h) */ 1 from sys.wri$_optstat_aux_history h   where savtime = :2)
+END OF STMT
+PARSE #1:c=4001,e=884,p=0,cr=0,cu=0,mis=1,r=0,dep=1,og=4,tim=1220983431283440
+BINDS #1:
+kkscoacd
+ Bind#0
+  oacdty=181 mxl=13(13) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=00 fl2=0001 frm=00 csi=00 siz=32 off=0
+  kxsbbbfp=40fa4eb8  bln=13  avl=13  flg=05
+  value=
+Dump of memory from 0x40FA4EB8 to 0x40FA4EC5
+40FA4EB0                   0E086D78 250E3A16          [xm...:.%]
+40FA4EC0 0D0099BE 0000003C                    [....<...]        
+ Bind#1
+  oacdty=181 mxl=13(13) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=00 fl2=0001 frm=00 csi=00 siz=0 off=16
+  kxsbbbfp=40fa4ec8  bln=13  avl=13  flg=01
+  value=
+Dump of memory from 0x40FA4EC8 to 0x40FA4ED5
+40FA4EC0                   0E086D78 250E3A16          [xm...:.%]
+40FA4ED0 0D0099BE 0000003C                    [....<...]        
+EXEC #1:c=4000,e=5419,p=0,cr=4,cu=6,mis=1,r=9,dep=1,og=4,tim=1220983431289030
+STAT #1 id=1 cnt=9 pid=0 pos=1 obj=0 op='FILTER  (cr=3 pr=0 pw=0 time=882 us)'
+STAT #1 id=2 cnt=9 pid=1 pos=1 obj=571 op='TABLE ACCESS BY INDEX ROWID AUX_STATS$ (cr=2 pr=0 pw=0 time=604 us)'
+STAT #1 id=3 cnt=9 pid=2 pos=1 obj=572 op='INDEX RANGE SCAN I_AUX_STATS$ (cr=1 pr=0 pw=0 time=434 us)'
+STAT #1 id=4 cnt=0 pid=1 pos=2 obj=4222 op='INDEX RANGE SCAN I_WRI$_OPTSTAT_AUX_ST (cr=1 pr=0 pw=0 time=85 us)'
+BINDS #11:
+=====================
+PARSING IN CURSOR #11 len=56 dep=1 uid=0 oct=7 lid=0 tim=1220983431290579 hv=2821397124 ad='2928ade0'
+DELETE FROM SYS.AUX_STATS$ WHERE SNAME = 'SYSSTATS_MAIN'
+END OF STMT
+EXEC #11:c=0,e=897,p=0,cr=3,cu=29,mis=0,r=9,dep=1,og=1,tim=1220983431290563
+BINDS #12:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec4bd0  bln=22  avl=05  flg=09
+  value=382.377
+=====================
+PARSING IN CURSOR #12 len=77 dep=1 uid=0 oct=2 lid=0 tim=1220983431291079 hv=928404322 ad='2928abc4'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_MAIN', 'CPUSPEEDNW', :B1 , NULL)
+END OF STMT
+EXEC #12:c=0,e=251,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431291070
+BINDS #13:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec4be8  bln=22  avl=02  flg=09
+  value=10
+=====================
+PARSING IN CURSOR #13 len=76 dep=1 uid=0 oct=2 lid=0 tim=1220983431291426 hv=543581576 ad='2928a9a8'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_MAIN', 'IOSEEKTIM', :B1 , NULL)
+END OF STMT
+EXEC #13:c=0,e=189,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431291417
+BINDS #14:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec4c00  bln=22  avl=03  flg=09
+  value=4096
+=====================
+PARSING IN CURSOR #14 len=77 dep=1 uid=0 oct=2 lid=0 tim=1220983431291692 hv=3127723828 ad='2928a78c'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_MAIN', 'IOTFRSPEED', :B1 , NULL)
+END OF STMT
+EXEC #14:c=0,e=165,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431291684
+BINDS #15:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec4c30  bln=22  avl=00  flg=09
+=====================
+PARSING IN CURSOR #15 len=75 dep=1 uid=0 oct=2 lid=0 tim=1220983431291945 hv=1547970203 ad='2928a570'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_MAIN', 'SREADTIM', :B1 , NULL)
+END OF STMT
+EXEC #15:c=0,e=150,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431291937
+BINDS #16:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec4c48  bln=22  avl=00  flg=09
+=====================
+PARSING IN CURSOR #16 len=75 dep=1 uid=0 oct=2 lid=0 tim=1220983431292195 hv=2108722292 ad='2928a354'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_MAIN', 'MREADTIM', :B1 , NULL)
+END OF STMT
+EXEC #16:c=0,e=152,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431292187
+BINDS #17:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec4c18  bln=22  avl=00  flg=09
+=====================
+PARSING IN CURSOR #17 len=75 dep=1 uid=0 oct=2 lid=0 tim=1220983431292451 hv=4129833197 ad='2928a138'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_MAIN', 'CPUSPEED', :B1 , NULL)
+END OF STMT
+EXEC #17:c=0,e=154,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431292441
+BINDS #18:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec4c60  bln=22  avl=00  flg=09
+=====================
+PARSING IN CURSOR #18 len=71 dep=1 uid=0 oct=2 lid=0 tim=1220983431292702 hv=4016519028 ad='29289f1c'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_MAIN', 'MBRC', :B1 , NULL)
+END OF STMT
+EXEC #18:c=0,e=153,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431292694
+BINDS #19:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec4c78  bln=22  avl=00  flg=09
+=====================
+PARSING IN CURSOR #19 len=73 dep=1 uid=0 oct=2 lid=0 tim=1220983431292952 hv=941172397 ad='29289d00'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_MAIN', 'MAXTHR', :B1 , NULL)
+END OF STMT
+EXEC #19:c=0,e=153,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431292944
+BINDS #20:
+kkscoacd
+ Bind#0
+  oacdty=02 mxl=22(21) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=13 fl2=206001 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40ec4c90  bln=22  avl=00  flg=09
+=====================
+PARSING IN CURSOR #20 len=75 dep=1 uid=0 oct=2 lid=0 tim=1220983431293200 hv=3800693767 ad='29289ae4'
+INSERT INTO SYS.AUX_STATS$ VALUES ('SYSSTATS_MAIN', 'SLAVETHR', :B1 , NULL)
+END OF STMT
+EXEC #20:c=0,e=149,p=0,cr=0,cu=3,mis=0,r=1,dep=1,og=1,tim=1220983431293192
+BINDS #21:
+=====================
+PARSING IN CURSOR #21 len=56 dep=1 uid=0 oct=7 lid=0 tim=1220983431293493 hv=885923863 ad='2928998c'
+DELETE FROM SYS.AUX_STATS$ WHERE SNAME = 'SYSSTATS_TEMP'
+END OF STMT
+EXEC #21:c=0,e=124,p=0,cr=1,cu=0,mis=0,r=0,dep=1,og=1,tim=1220983431293484
+=====================
+PARSING IN CURSOR #23 len=96 dep=1 uid=0 oct=2 lid=0 tim=1220983431293836 hv=2833381671 ad='293fe710'
+insert into sys.wri$_optstat_opr (operation, target, start_time,  end_time) values (:1,:2,:3,:4)
+END OF STMT
+PARSE #23:c=0,e=127,p=0,cr=0,cu=0,mis=0,r=0,dep=1,og=4,tim=1220983431293826
+BINDS #23:
+kkscoacd
+ Bind#0
+  oacdty=01 mxl=32(19) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=10 fl2=0001 frm=01 csi=873 siz=32 off=0
+  kxsbbbfp=40ec2b14  bln=32  avl=19  flg=09
+  value="delete_system_stats"
+ Bind#1
+  oacdty=01 mxl=32(00) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=10 fl2=0001 frm=01 csi=873 siz=32 off=0
+  kxsbbbfp=00000000  bln=32  avl=00  flg=09
+ Bind#2
+  oacdty=181 mxl=13(13) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=00 fl2=0001 frm=00 csi=00 siz=32 off=0
+  kxsbbbfp=40eb1f54  bln=13  avl=13  flg=05
+  value=
+Dump of memory from 0x40EB1F54 to 0x40EB1F61
+40EB1F50          0E086D78 230E3A16 0D9082B5      [xm...:.#....]
+40EB1F60 0000003C                             [<...]            
+ Bind#3
+  oacdty=181 mxl=13(13) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=00 fl2=0001 frm=00 csi=00 siz=0 off=16
+  kxsbbbfp=40eb1f64  bln=13  avl=13  flg=01
+  value=
+Dump of memory from 0x40EB1F64 to 0x40EB1F71
+40EB1F60          0E086D78 260E3A16 0D70846C      [xm...:.&l.p.]
+40EB1F70 0000003C                             [<...]            
+EXEC #23:c=0,e=579,p=0,cr=1,cu=6,mis=0,r=1,dep=1,og=4,tim=1220983431294535
+XCTEND rlbk=0, rd_only=0
+=====================
+PARSING IN CURSOR #22 len=6 dep=1 uid=0 oct=44 lid=0 tim=1220983431297197 hv=255718823 ad='0'
+COMMIT
+END OF STMT
+EXEC #22:c=0,e=715,p=0,cr=0,cu=1,mis=0,r=0,dep=1,og=0,tim=1220983431297176
+EXEC #4:c=20001,e=48407,p=0,cr=15,cu=97,mis=0,r=1,dep=0,og=1,tim=1220983431297334
+WAIT #4: nam='log file sync' ela= 186 buffer#=3734 p2=0 p3=0 obj#=-1 tim=1220983431297603
+WAIT #4: nam='SQL*Net message to client' ela= 7 driver id=1650815232 #bytes=1 p3=0 obj#=-1 tim=1220983431297734
+WAIT #4: nam='SQL*Net message from client' ela= 322 driver id=1650815232 #bytes=1 p3=0 obj#=-1 tim=1220983431298110
+=====================
+PARSING IN CURSOR #1 len=52 dep=0 uid=0 oct=47 lid=0 tim=1220983431298297 hv=1029988163 ad='2c223ee4'
+BEGIN DBMS_OUTPUT.GET_LINES(:LINES, :NUMLINES); END;
+END OF STMT
+PARSE #1:c=0,e=65,p=0,cr=0,cu=0,mis=0,r=0,dep=0,og=1,tim=1220983431298289
+BINDS #1:
+kkscoacd
+ Bind#0
+  oacdty=123 mxl=4000(4000) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=00 fl2=1000000 frm=00 csi=00 siz=4000 off=0
+  kxsbbbfp=41011674  bln=4000  avl=00  flg=15
+ Bind#1
+  oacdty=02 mxl=22(22) mxlc=00 mal=00 scl=00 pre=00
+  oacflg=01 fl2=1000000 frm=00 csi=00 siz=24 off=0
+  kxsbbbfp=40f0c928  bln=22  avl=22  flg=05
+  value=###
+  An invalid number has been seen.Memory contents are :
+Dump of memory from 0x40F0C928 to 0x40F0C93E
+40F0C920                   000102C2 00000000          [........]
+40F0C930 00000000 00000000 00000000 00000000  [................]
+WAIT #1: nam='SQL*Net message to client' ela= 11 driver id=1650815232 #bytes=1 p3=0 obj#=-1 tim=1220983431299113
+EXEC #1:c=4000,e=916,p=0,cr=3,cu=0,mis=0,r=1,dep=0,og=1,tim=1220983431299363
+WAIT #1: nam='SQL*Net message from client' ela= 965941 driver id=1650815232 #bytes=1 p3=0 obj#=-1 tim=1220983432265465
+XCTEND rlbk=0, rd_only=1

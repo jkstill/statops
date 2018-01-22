@@ -1,0 +1,117 @@
+
+System stats can be gathered by manually running 
+either of the folowing two scripts:
+
+  gather_systems_stats_workload.sql
+  gather_systems_stats_noworkload.sql
+
+
+System stats can also be generated for different workloads.
+
+One set during the day, and another sight for night time batchjobs.
+
+Or some combination thereof.
+
+The steps to do so:
+
+These should be run as sysdba
+
+* create the stats table
+
+  It is assumed that the SYSTEM schema will own the stats table.
+  Use a tablename of SYSTEM_STATS. 
+  The SYSTEM_STATS table will be used to export/import SYSTEM, 
+  DICTIONARY and FIXED_OBJECTS statistics
+
+  eg.
+  ./create_stats_table.sh -o dv11 -d dv11 -u system -n system -t system_stats -s system
+
+  -o set oracle home with the ORACLE_SID
+  -n stats table owner
+  -d database to run on
+  -u logon with this username
+  -t name of system stats table to create
+  -s tablespace
+
+* export the current stats to the stats table
+
+  ./export_system_stats.sh -o dv11 -d dv11 -u js001292 -t system_stats -n system
+
+  -o set oracle home with the ORACLE_SID
+  -n stats table owner
+  -d database to run on
+  -u logon with this username
+  -t name of system stats table 
+
+
+* create and run the stats gather job
+
+  This job will be used to gather stats twice.
+  One set will be labeled OLTP and the other set will be BATCH.
+
+  The start, stop and run times are configurable by editing the 
+  script that runs the resulting job in DBMS_JOB
+
+  Keep in mind the fundamental difference between gather_system_stats
+  and gather_schema_stats: the gather_schema_stats procedure collects
+  statistics directly into the data dictionary, while gather_system_stats
+  does not.
+
+  gather_system_stats gathers stats directly in to the specified 
+  statistics table without affecting statistics in the data dictionary.
+
+  import_system_stats must be used to import the new system statistics
+  into the data dictionary.
+
+  create the stats procedure
+
+  as SYSDBA
+    sys_grants.sql
+
+  as SYSTEM
+    gather_system_stats_sp.sql
+	
+	-- The js scripts all set the collection period at 2 hours
+	-- edit the script to change the lenght of time to collect stats
+
+	 js_oltp.sql - SAP, etc
+	 js_daytime.sql - BI
+
+	 js_batch.sql
+
+  now that the  two batch jobs are created, they can be scheduled to 
+  run once anytime 
+
+  first find the jobs
+
+	 col "job" format 99999
+    col last_date format a22
+    col next_date format a22
+    col what format a30
+
+    select job, last_date, next_date, what
+    from user_jobs
+    where what like 'gather_system_stats%'
+    order by job;
+
+      JOB LAST_DATE              NEXT_DATE              WHAT
+   ------ ---------------------- ---------------------- ------------------------------
+      905 07/30/2009 17:52:02    12/15/2036 17:52:03    gather_system_stats('OLTP',120
+                                                        ,'SYSTEM','SYSTEM_STATS');
+   
+      906                        12/15/2036 17:53:50    gather_system_stats('BATCH',120
+                                                        ,'SYSTEM','SYSTEM_STATS');
+
+	
+   schedule the BATCH job to run at 19:00 tonight
+   exec dbms_job.next_date(906,to_date('07/30/2009 19:00'))
+
+
+   schedule the OLTP job to run at 08:00 tomorrow
+   exec dbms_job.next_date(906,to_date('07/31/2009 08:00'))
+
+
+* set up the jobs to load each set of stats
+
+STILL TO DO...
+

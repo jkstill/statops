@@ -1,0 +1,13 @@
+DBA_REGISTERED_MVIEWS          select sowner, snapname, snapsite,
+                                  decode(bitand(flag,1), 0 , 'NO', 'YES'),
+                                  decode(bitand(flag,2), 0 , 'NO', 'YES'),
+                                  decode(bitand(flag, 32),               32, 'PRIMARY KEY',
+                                         decode(bitand(flag, 536870912), 536870912, 'OBJECT ID', 'ROWID')),
+                                  snapshot_id,
+                                  decode(rep_type, 1, 'ORACLE 7 MATERIALIZED VIEW',
+                                                   2, 'ORACLE 8 MATERIALIZED VIEW',
+                                                   3, 'REPAPI MATERIALIZED VIEW',
+                                                      'UNKNOWN'),
+                                  query_txt
+                               from sys.reg_snap$
+

@@ -1,0 +1,133 @@
+DBA_OBJECTS                    select u.name, o.name, o.subname, o.obj#, o.dataobj#,
+                                      decode(o.type#, 0, 'NEXT OBJECT', 1, 'INDEX', 2, 'TABLE', 3, 'CLUSTER',
+                                                     4, 'VIEW', 5, 'SYNONYM', 6, 'SEQUENCE',
+                                                     7, 'PROCEDURE', 8, 'FUNCTION', 9, 'PACKAGE',
+                                                     11, 'PACKAGE BODY', 12, 'TRIGGER',
+                                                     13, 'TYPE', 14, 'TYPE BODY',
+                                                     19, 'TABLE PARTITION', 20, 'INDEX PARTITION', 21, 'LOB',
+                                                     22, 'LIBRARY', 23, 'DIRECTORY', 24, 'QUEUE',
+                                                     28, 'JAVA SOURCE', 29, 'JAVA CLASS', 30, 'JAVA RESOURCE',
+                                                     32, 'INDEXTYPE', 33, 'OPERATOR',
+                                                     34, 'TABLE SUBPARTITION', 35, 'INDEX SUBPARTITION',
+                                                     40, 'LOB PARTITION', 41, 'LOB SUBPARTITION',
+                                                     42, NVL((SELECT 'REWRITE EQUIVALENCE'
+                                                              FROM sum$ s
+                                                              WHERE s.obj#=o.obj#
+                                                                    and bitand(s.xpflags, 8388608) = 8388608),
+                                                             'MATERIALIZED VIEW'),
+                                                     43, 'DIMENSION',
+                                                     44, 'CONTEXT', 46, 'RULE SET', 47, 'RESOURCE PLAN',
+                                                     48, 'CONSUMER GROUP',
+                                                     51, 'SUBSCRIPTION', 52, 'LOCATION',
+                                                     55, 'XML SCHEMA', 56, 'JAVA DATA',
+                                                     57, 'EDITION', 59, 'RULE',
+                                                     60, 'CAPTURE', 61, 'APPLY',
+                                                     62, 'EVALUATION CONTEXT',
+                                                     66, 'JOB', 67, 'PROGRAM', 68, 'JOB CLASS', 69, 'WINDOW',
+                                                     72, 'SCHEDULER GROUP', 74, 'SCHEDULE', 79, 'CHAIN',
+                                                     81, 'FILE GROUP', 82, 'MINING MODEL', 87, 'ASSEMBLY',
+                                                     90, 'CREDENTIAL', 92, 'CUBE DIMENSION', 93, 'CUBE',
+                                                     94, 'MEASURE FOLDER', 95, 'CUBE BUILD PROCESS',
+                                                     100, 'FILE WATCHER', 101, 'DESTINATION',
+                                                    'UNDEFINED'),
+                                      o.ctime, o.mtime,
+                                      to_char(o.stime, 'YYYY-MM-DD:HH24:MI:SS'),
+                                      decode(o.status, 0, 'N/A', 1, 'VALID', 'INVALID'),
+                                      decode(bitand(o.flags, 2), 0, 'N', 2, 'Y', 'N'),
+                                      decode(bitand(o.flags, 4), 0, 'N', 4, 'Y', 'N'),
+                                      decode(bitand(o.flags, 16), 0, 'N', 16, 'Y', 'N'),
+                                      o.namespace,
+                                      o.defining_edition
+                               from sys."_CURRENT_EDITION_OBJ" o, sys.user$ u
+                               where o.owner# = u.user#
+                                 and o.linkname is null
+                                 and (o.type# not in (1  /* INDEX - handled below */,
+                                                     10 /* NON-EXISTENT */)
+                                      or
+                                      (o.type# = 1 and 1 = (select 1
+                                                             from sys.ind$ i
+                                                            where i.obj# = o.obj#
+                                                              and i.type# in (1, 2, 3, 4, 6, 7, 9))))
+                                 and o.name != '_NEXT_OBJECT'
+                                 and o.name != '_default_auditing_options_'
+                                 and bitand(o.flags, 128) = 0
+                               union all
+                               select u.name, l.name, NULL, to_number(null), to_number(null),
+                                      'DATABASE LINK',
+                                      l.ctime, to_date(null), NULL, 'VALID','N','N', 'N', NULL, NULL
+                               from sys.link$ l, sys.user$ u
+                               where l.owner# = u.user#
+
+DBA_OBJECTS_AE                 select u.name, o.name, o.subname, o.obj#, o.dataobj#,
+                                      decode(o.type#, 0, 'NEXT OBJECT', 1, 'INDEX', 2, 'TABLE', 3, 'CLUSTER',
+                                                     4, 'VIEW', 5, 'SYNONYM', 6, 'SEQUENCE',
+                                                     7, 'PROCEDURE', 8, 'FUNCTION', 9, 'PACKAGE', 10, 'NON-EXISTENT',
+                                                     11, 'PACKAGE BODY', 12, 'TRIGGER',
+                                                     13, 'TYPE', 14, 'TYPE BODY',
+                                                     19, 'TABLE PARTITION', 20, 'INDEX PARTITION', 21, 'LOB',
+                                                     22, 'LIBRARY', 23, 'DIRECTORY', 24, 'QUEUE',
+                                                     28, 'JAVA SOURCE', 29, 'JAVA CLASS', 30, 'JAVA RESOURCE',
+                                                     32, 'INDEXTYPE', 33, 'OPERATOR',
+                                                     34, 'TABLE SUBPARTITION', 35, 'INDEX SUBPARTITION',
+                                                     40, 'LOB PARTITION', 41, 'LOB SUBPARTITION',
+                                                     42, NVL((SELECT 'REWRITE EQUIVALENCE'
+                                                              FROM sum$ s
+                                                              WHERE s.obj#=o.obj#
+                                                                    and bitand(s.xpflags, 8388608) = 8388608),
+                                                             'MATERIALIZED VIEW'),
+                                                     43, 'DIMENSION',
+                                                     44, 'CONTEXT', 46, 'RULE SET', 47, 'RESOURCE PLAN',
+                                                     48, 'CONSUMER GROUP',
+                                                     51, 'SUBSCRIPTION', 52, 'LOCATION',
+                                                     55, 'XML SCHEMA', 56, 'JAVA DATA',
+                                                     57, 'EDITION', 59, 'RULE',
+                                                     60, 'CAPTURE', 61, 'APPLY',
+                                                     62, 'EVALUATION CONTEXT',
+                                                     66, 'JOB', 67, 'PROGRAM', 68, 'JOB CLASS', 69, 'WINDOW',
+                                                     72, 'WINDOW GROUP', 74, 'SCHEDULE', 79, 'CHAIN',
+                                                     81, 'FILE GROUP', 82, 'MINING MODEL', 87, 'ASSEMBLY',
+                                                     90, 'CREDENTIAL', 92, 'CUBE DIMENSION', 93, 'CUBE',
+                                                     94, 'MEASURE FOLDER', 95, 'CUBE BUILD PROCESS',
+                                                    'UNDEFINED'),
+                                      o.ctime, o.mtime,
+                                      to_char(o.stime, 'YYYY-MM-DD:HH24:MI:SS'),
+                                      decode(o.status, 0, 'N/A', 1, 'VALID', 'INVALID'),
+                                      decode(bitand(o.flags, 2), 0, 'N', 2, 'Y', 'N'),
+                                      decode(bitand(o.flags, 4), 0, 'N', 4, 'Y', 'N'),
+                                      decode(bitand(o.flags, 16), 0, 'N', 16, 'Y', 'N'),
+                                      o.namespace,
+                                      o.defining_edition
+                               from sys."_ACTUAL_EDITION_OBJ" o, sys.user$ u
+                               where o.owner# = u.user#
+                                 and o.linkname is null
+                                 and (o.type# != 1  /* INDEX - handled below */
+                                      or
+                                      (o.type# = 1 and 1 = (select 1
+                                                             from sys.ind$ i
+                                                            where i.obj# = o.obj#
+                                                              and i.type# in (1, 2, 3, 4, 6, 7, 9))))
+                                 and o.name != '_NEXT_OBJECT'
+                                 and o.name != '_default_auditing_options_'
+                                 and bitand(o.flags, 128) = 0
+                               union all
+                               select u.name, l.name, NULL, to_number(null), to_number(null),
+                                      'DATABASE LINK',
+                                      l.ctime, to_date(null), NULL, 'VALID','N','N', 'N', NULL, NULL
+                               from sys.link$ l, sys.user$ u
+                               where l.owner# = u.user#
+
+GV$LOGMNR_DBA_OBJECTS
+select u.inst_id, u.name, o.name, o.subname, o.obj#, o.dataobj#,      decode(o.type#, 0, 'NEXT OBJECT', 1, 'INDEX', 2, 'TABLE', 3, 'CLUSTER',                      4, 'VIEW', 5, 'SYNONYM', 6, 'SEQUENCE',                      7, 'PROCEDURE',
+8, 'FUNCTION', 9, 'PACKAGE',                     11, 'PACKAGE BODY', 12, 'TRIGGER',                     13, 'TYPE', 14, 'TYPE BODY',                     19, 'TABLE PARTITION', 20, 'INDEX PARTITION', 21, 'LOB',                     22, 'LIBRA
+RY', 23, 'DIRECTORY', 24, 'QUEUE',                     28, 'JAVA SOURCE', 29, 'JAVA CLASS', 30, 'JAVA RESOURCE',                     32, 'INDEXTYPE', 33, 'OPERATOR',                     34, 'TABLE SUBPARTITION', 35, 'INDEX SUBPARTITION',
+                  40, 'LOB PARTITION', 41, 'LOB SUBPARTITION',                     42, 'MATERIALIZED VIEW',                     43, 'DIMENSION',                     44, 'CONTEXT', 46, 'RULE SET', 47, 'RESOURCE PLAN',                     48,
+ 'CONSUMER GROUP',                     51, 'SUBSCRIPTION', 52, 'LOCATION',                     55, 'XML SCHEMA', 56, 'JAVA DATA',                     57, 'SECURITY PROFILE', 59, 'RULE',                     60, 'CAPTURE', 61, 'APPLY',
+              62, 'EVALUATION CONTEXT',                     66, 'JOB', 67, 'PROGRAM', 68, 'JOB CLASS', 69, 'WINDOW',                     72, 'WINDOW GROUP', 74, 'SCHEDULE', 79, 'CHAIN',                     81, 'FILE GROUP',
+   'UNDEFINED'),      o.ctime, o.mtime,      to_char(o.stime, 'YYYY-MM-DD:HH24:MI:SS'),        decode(o.status, 0, 'N/A', 1, 'VALID', 'INVALID'),        decode(bitand(o.flags, 2), 0, 'N', 2, 'Y', 'N'),        decode(bitand(o.flags, 4), 0, '
+N', 4, 'Y', 'N'),        decode(bitand(o.flags, 16), 0, 'N', 16, 'Y', 'N') from x$logmnr_obj$ o, x$logmnr_user$ u where o.owner# = u.user#   and o.linkname is null   and (o.type# not in (1  /* INDEX - handled below */,
+ 10 /* NON-EXISTENT */)        or        (o.type# = 1 and 1 = (select 1                               from x$logmnr_ind$ i                              where i.obj# = o.obj#                                and i.type# in (1, 2, 3, 4, 6, 7, 9
+))))   and o.name != '_NEXT_OBJECT'   and o.name != '_default_auditing_options_'
+
+V$LOGMNR_DBA_OBJECTS
+select OWNER, OBJECT_NAME, SUBOBJECT_NAME, OBJECT_ID, DATA_OBJECT_ID,      OBJECT_TYPE, CREATED, LAST_DDL_TIME, TIMESTAMP, STATUS,      TEMPORARY, GENERATED, SECONDARY from gv$logmnr_dba_objects where inst_id = userenv('instance')
+

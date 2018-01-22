@@ -1,0 +1,4 @@
+begin
+	dbms_stats.gather_system_stats( GATHERING_MODE => 'NOWORKLOAD');
+end;
+

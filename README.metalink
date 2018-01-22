@@ -1,0 +1,59 @@
+
+Some Oracle Support Site documents related to dbms_stats
+
+117203.1 -  How to Use DBMS_STATS to Move Statistics to a Different Database
+
+this details use of the following procedures in dbms_stats:
+
+  create_stat_table
+
+  export_database_stats
+  export_schema_stats
+  export_system_stats
+  export_table_stats
+
+  import_database_stats
+  import_schema_stats
+  import_system_stats
+  import_table_stats
+
+this note alway shows how to import stats from a different schema:
+
+  Different schema:
+  =================
+  You may not export stats from one schema name and import into a different schema name (Bug 1077535).
+  The schema names much match exactly.
+  If the target database schema name (import database) is different from the source
+  database schema name (export database), then you may update the table you exported the statistics
+  into and set the C5 column to the target schema name.
+  i.e.
+  "update table sd_stat set c5 = '<target schemaname>'
+  where c5 = '<Source Schema name>'
+    and statid = '<Stat Id used while exporting these stats>;"
+
+=============================================================================
+
+1074354.6 - DBMS_STATS.CREATE_STAT_TABLE: What Do Table Columns Mean?
+
+Essentially this note says it is none of our business.
+
+It quotes the documentation:
+
+ "The columns and types that compose this table are not relevant as it should 
+   be accessed solely through the procedures in this package (dbms_stats)."
+
+Then goes on to say query DBA_SOURCE
+
+  You can query on "dba_source" to find more information regarding the 
+  "dba_stats" package.
+
+  SQL>spool filename
+
+  SQL>select text from dba_source where name='DBMS_STATS';
+
+  SQL>spool off
+
+=============================================================================
+
+
+
