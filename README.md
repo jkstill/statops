@@ -5,10 +5,15 @@ These are scripts I developed some years ago and have just added to my Github Re
 
 There are a things that need to be changed to start using them again, but not too much
 
+These are relevant only for scripts in the ./system_stats directory
+
 - remove references to pwc.pl - was once password retrieval
 - remove references in shell scripts to db/server names
 
-There is a dependency on the shell scripts in this repo [functions.sh repo](https://github.com/jkstill/shell-functions "functions.sh repo")
+There is a dependency on this shell scripts [functions.sh](https://github.com/jkstill/shell-functions/blob/master/functions.sh) which should be copied or linked into the directory structure.
+
+The FUNCTIONS_FILE variable will then need to be edited in the shell scripts in ./bin.
+
 
 # directories
 
@@ -46,11 +51,11 @@ scripts to gather/import/export/set system statistics
   SQL scripts used by shell scripts
 
 
-
 # Export and Import DBMS_STATS
 
 A copy of of [functions.sh](https://github.com/jkstill/shell-functions/blob/master/functions.sh) will be needed for this installation
 
+The FUNCTIONS_FILE variable will then need to be edited in the shell scripts in ./bin.
 
 # Export Database Statistics
 
