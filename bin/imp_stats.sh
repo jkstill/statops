@@ -58,8 +58,10 @@ export ALNUM1="[[:alnum:]]+"
 export ALNUM3="[[:alnum:]]{3,}"
 export USER_RE='[[:alnum:]_$]+'
 export DATABASE_RE=$ALNUM3
+export DATABASE_RE="[[:alnum:][:punct:]\/]+"
 export TABLE_RE='[[:alnum:]_#$]+'
-export FILE_RE="[[:alnum:]_$%-.]+"
+#export FILE_RE="[[:alnum:]_$%-.]+"
+export FILE_RE="[[:alnum:]_$%-.\/]+"
 
 
 # bash

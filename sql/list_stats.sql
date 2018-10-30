@@ -18,6 +18,8 @@ col stats_table new_value stats_table noprint
 col get_object new_value get_object noprint
 col dlevel new_value dlevel noprint
 col schema_name new_value schema_name noprint
+col owner format a30
+col statid format a30
 
 set term on
 prompt Stats Table Owner:
