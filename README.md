@@ -1,5 +1,5 @@
 
-# Scripts for maintaing Oracle Statistics
+# Scripts for Maintaining Oracle Statistics
 
 These are scripts I developed some years ago and have just added to my Github Repo.
 
