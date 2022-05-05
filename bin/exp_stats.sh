@@ -65,7 +65,7 @@ ALLARGS=$(upperCase $ALLARGS)
 export ALNUM1="[[:alnum:]]+"
 export ALNUM3="[[:alnum:]]{3,}"
 export USER_RE='[[:alnum:]_$]+'
-export DATABASE_RE=$ALNUM3
+export DATABASE_RE='[[:punct:][:alnum:]]{3,}'
 export OWNER_RE='[[:alnum:]_$]+'
 export TABLE_RE='[[:alnum:]_#$]+'
 export STATID_RE='(%|[[:alnum:]_$%]+)'
@@ -77,11 +77,11 @@ export SCHEMA_RE='(%|[[:alnum:]_$%]+)'
 # statid is optional , and may use wildcards
 # schema is optional - defaulted to %'
 # :$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$STATID:$SCHEMA:$ORACLE_SID:
-VALID_ARGS=(
-":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$STATID_RE:$SCHEMA_RE:$DATABASE_RE:" \
+declare -a VALID_ARGS=(
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$STATID_RE:$SCHEMA_RE:$DATABASE_RE:"
 )
 
-validate_args $ALLARGS ${VALID_ARGS[*]}
+validate_args "$ALLARGS" "${VALID_ARGS[@]}"
 ARG_RESULT=$?
 
 if [ "$ARG_RESULT" != '0' ]; then

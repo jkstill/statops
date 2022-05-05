@@ -71,7 +71,7 @@ ALLARGS=$(upperCase $ALLARGS)
 export ALNUM1="[[:alnum:]]+"
 export ALNUM3="[[:alnum:]]{3,}"
 export USER_RE='[[:alnum:]_$]+'
-export DATABASE_RE=$ALNUM3
+export DATABASE_RE='[[:punct:][:alnum:]]{3,}'
 export OWNER_RE='[[:alnum:]_$]+'
 export TABLE_RE='[[:alnum:]_#$]+'
 export SCHEMA_RE='[[:alnum:]_$]+'
@@ -84,11 +84,11 @@ export STATID_RE='[[:alnum:]_$]+'
 # required args: database, username, table_name, owner, oracle_sid
 # noinvalidate will default to YES
 # :$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$NOINVALIDATE:$ORACLE_SID:
-VALID_ARGS=(
-":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$NOINV_RE:$DATABASE_RE:" \
+declare -a VALID_ARGS=(
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$NOINV_RE:$DATABASE_RE:"
 )
 
-validate_args $ALLARGS ${VALID_ARGS[*]}
+validate_args "$ALLARGS" "${VALID_ARGS[@]}"
 ARG_RESULT=$?
 
 if [ "$ARG_RESULT" != '0' ]; then

@@ -114,7 +114,7 @@ ALLARGS=$(upperCase $ALLARGS)
 export ALNUM1="[[:alnum:]]+"
 export ALNUM3="[[:alnum:]]{3,}"
 export USER_RE='[[:alnum:]_$]+'
-export DATABASE_RE=$ALNUM3
+export DATABASE_RE='[[:punct:][:alnum:]]{3,}'
 export OWNER_RE='[[:alnum:]_$]+'
 export TABLE_RE='[[:alnum:]_#$]+'
 export SCHEMA_RE='[[:alnum:]_$]+'
@@ -127,12 +127,12 @@ export STATID_RE='[[:alnum:]_$]+'
 # import non-schema stats from stats table
 # import schema stats from stats table
 # :$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$SCHEMA:$STATS_TYPE:$STATID:$NOINVALIDATE:$FORCE_IMPORT:$ORACLE_SID:"
-VALID_ARGS=(
-":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE::(DICTIONARY_STATS|SYSTEM_STATS|FIXED_OBJECTS_STATS):$STATID_RE:$NOINV_RE:$FORCE_RE:$DATABASE_RE:" \
-":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$SCHEMA_RE:(SCHEMA):$STATID_RE:$NOINV_RE:$FORCE_RE:$DATABASE_RE:" \
+declare -a VALID_ARGS=(
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE::(DICTIONARY_STATS|SYSTEM_STATS|FIXED_OBJECTS_STATS):$STATID_RE:$NOINV_RE:$FORCE_RE:$DATABASE_RE:"
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$SCHEMA_RE:(SCHEMA):$STATID_RE:$NOINV_RE:$FORCE_RE:$DATABASE_RE:"
 )
 
-validate_args $ALLARGS ${VALID_ARGS[*]}
+validate_args "$ALLARGS" "${VALID_ARGS[@]}"
 ARG_RESULT=$?
 
 if [ "$ARG_RESULT" != '0' ]; then

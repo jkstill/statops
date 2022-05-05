@@ -57,8 +57,7 @@ ALLARGS=$(upperCase $ALLARGS)
 export ALNUM1="[[:alnum:]]+"
 export ALNUM3="[[:alnum:]]{3,}"
 export USER_RE='[[:alnum:]_$]+'
-export DATABASE_RE=$ALNUM3
-export DATABASE_RE="[[:alnum:][:punct:]\/]+"
+export DATABASE_RE='[[:punct:][:alnum:]]{3,}'
 export TABLE_RE='[[:alnum:]_#$]+'
 #export FILE_RE="[[:alnum:]_$%-.]+"
 export FILE_RE="[[:alnum:]_$%-.\/]+"
@@ -68,11 +67,11 @@ export FILE_RE="[[:alnum:]_$%-.\/]+"
 # order of argument regexs
 # all arguments are required
 # :$USERNAME:$DATABASE:$IMPORT_FILE:$ORACLE_SID:
-VALID_ARGS=(
-":$USER_RE:$DATABASE_RE:$USER_RE:$USER_RE:$FILE_RE:$DATABASE_RE:" \
+declare -a VALID_ARGS=(
+":$USER_RE:$DATABASE_RE:$USER_RE:$USER_RE:$FILE_RE:$DATABASE_RE:"
 )
 
-validate_args $ALLARGS ${VALID_ARGS[*]}
+validate_args "$ALLARGS" "${VALID_ARGS[@]}"
 ARG_RESULT=$?
 
 if [ "$ARG_RESULT" != '0' ]; then

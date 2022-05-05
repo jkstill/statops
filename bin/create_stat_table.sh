@@ -60,7 +60,7 @@ ALLARGS=$(upperCase $ALLARGS)
 export ALNUM1="[[:alnum:]]+"
 export ALNUM3="[[:alnum:]]{3,}"
 export USER_RE='[[:alnum:]_$]+'
-export DATABASE_RE=$ALNUM3
+export DATABASE_RE='[[:punct:][:alnum:]]{3,}'
 export OWNER_RE='[[:alnum:]_$]+'
 export TABLE_RE='[[:alnum:]_#$]+'
 export TBS_RE='[[:alnum:]_$]*'
@@ -69,11 +69,11 @@ export TBS_RE='[[:alnum:]_$]*'
 # order of argument regexs
 # nearly all arguments are required
 # :$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$TBS_NAME:
-VALID_ARGS=(
-":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$TBS_RE:$DATABASE_RE:" \
+declare -a VALID_ARGS=(
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$TBS_RE:$DATABASE_RE:"
 )
 
-validate_args $ALLARGS ${VALID_ARGS[*]}
+validate_args "$ALLARGS" "${VALID_ARGS[@]}"
 ARG_RESULT=$?
 
 if [ "$ARG_RESULT" != '0' ]; then

@@ -68,7 +68,7 @@ ALLARGS=$(upperCase $ALLARGS)
 export ALNUM1="[[:alnum:]]+"
 export ALNUM3="[[:alnum:]]{3,}"
 export USER_RE='[[:alnum:]_$]+'
-export DATABASE_RE=$ALNUM3
+export DATABASE_RE='[[:punct:][:alnum:]]{3,}'
 export OWNER_RE='[[:alnum:]_$]+'
 export STATID_RE='[[:alnum:]_$]+'
 export TIME_RE="[[:digit:].]+"
@@ -82,11 +82,11 @@ export DEGREE_RE='[[:digit:]]+'
 # delete schema stats from stats table
 # delete schema stats from dictionary
 # :$USERNAME:$DATABASE:$DEGREE:$SCHEMA:$DAYS_OLD:$ORACLE_SID:
-VALID_ARGS=(
-":$USER_RE:$DATABASE_RE:$DEGREE_RE:$USER_RE:$TIME_RE:$DATABASE_RE:" \
+declare -a VALID_ARGS=(
+":$USER_RE:$DATABASE_RE:$DEGREE_RE:$USER_RE:$TIME_RE:$DATABASE_RE:"
 )
 
-validate_args $ALLARGS ${VALID_ARGS[*]}
+validate_args "$ALLARGS" "${VALID_ARGS[@]}"
 ARG_RESULT=$?
 
 if [ "$ARG_RESULT" != '0' ]; then

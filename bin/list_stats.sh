@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 DEBUG=0
 FUNCTIONS_FILE=/home/jkstill/bin/functions.sh; export FUNCTIONS_FILE
@@ -80,13 +80,13 @@ ALLARGS=$(upperCase $ALLARGS)
 export ALNUM1="[[:alnum:]]+"
 export ALNUM3="[[:alnum:]]{3,}"
 export USER_RE='[[:alnum:]_$]+'
-export DATABASE_RE=$ALNUM3
+export DATABASE_RE='[[:punct:][:alnum:]]{3,}'
 export OWNER_RE='[[:alnum:]_$]+'
 export TABLE_RE='[[:alnum:]_#$]+'
 export OBJECT_RE='[[:alnum:]_#$%]+'
 export OBJECT_RE='*'
 export DLEVEL_RE1='[1-5]{1}'
-export DLEVEL_RE2='[3-5]{1}'
+export DLEVEL_RE2='[2-5]{1}'
 export SCHEMA_RE='[[:alnum:]_$%]+'
 export SCHEMA_RE='*'
 
@@ -100,12 +100,12 @@ export SCHEMA_RE='*'
 # schema other than % only valid with levels 3-5
 
 # :$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$DLEVEL:$SCHEMA:$OBJECT:$ORACLE_SID:
-VALID_ARGS=(
-":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$DLEVEL_RE2:$SCHEMA_RE:$OBJECT_RE:$DATABASE_RE:" \
-":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$DLEVEL_RE1:%:%:$DATABASE_RE:" \
+declare -a VALID_ARGS=(
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$DLEVEL_RE2:$SCHEMA_RE:$OBJECT_RE:$DATABASE_RE:"
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$DLEVEL_RE1:%:%:$DATABASE_RE:"
 )
 
-validate_args $ALLARGS ${VALID_ARGS[*]}
+validate_args "$ALLARGS" "${VALID_ARGS[@]}"
 ARG_RESULT=$?
 
 if [ "$ARG_RESULT" != '0' ]; then
