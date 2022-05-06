@@ -27,6 +27,8 @@ then statistics will be deleted from the statistics table.
 
 Make sure you are using these options correctly!
 
+-r dryrun      - show VALID_ARGS and exit without running the job
+
 -s schema      - delete oracle stats for schema when -T argument is 'schema'
 
 -T stats_type  - type of statistics to delete
@@ -45,8 +47,9 @@ Make sure you are using these options correctly!
 }
 
 declare PASSWORD=''  # must be defined
+declare DRYRUN=N
 
-while getopts d:u:s:o:n:t:i:v:f:T:p:h arg
+while getopts d:u:s:o:n:t:i:v:f:T:p:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -60,6 +63,7 @@ do
 		f) FORCE_DELETE=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
 		p) PASSWORD="$OPTARG";;
+		r) DRYRUN=Y;;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -190,11 +194,6 @@ SQLPLUS=$ORACLE_HOME/bin/sqlplus
 printf "Deleting Schema Stats for: %s  statid: \n" $SCHEMA $STATID
 printf "  Database: %s \n  Table: %s \n\n" $DATABASE $TABLE_NAME 
 
-# get password from database
-PASSWORD=$(getPassword $PASSWORD)
-
-set SQLPATH_OLD=$SQLPATH
-unset SQLPATH
 
 $PRINTF "DEL: 
 SCRIPT:       $DELETE_STATS_SQL_SCRIPT 
@@ -208,6 +207,21 @@ STATID:       $STATID
 NOINVALIDATE: $NOINVALIDATE
 "
 
+[[ $DRYRUN == 'Y' ]] && {
+	echo
+	for re in "${VALID_ARGS[@]}}"
+	do
+		echo REGEX: $re
+	done
+	echo
+	exit
+}
+
+# get password from database
+PASSWORD=$(getPassword $PASSWORD)
+
+set SQLPATH_OLD=$SQLPATH
+unset SQLPATH
 
 if [ "$STATS_TYPE" == 'SCHEMA' ]; then
 	$SQLPLUS /nolog <<-EOF

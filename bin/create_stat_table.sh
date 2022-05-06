@@ -20,6 +20,7 @@ $0
 -u username        - username to logon with
 -p password        - the user is prompted for password if not set on the command line
 -n owner           - owner of the stats table
+-r dryrun          - show VALID_ARGS and exit without running the job
 -t table_name      - name of the stats table to create
 -s tablespace_name - tablespace name in which to create the stats table
                      defaults to the default tablespace for the owner
@@ -27,8 +28,9 @@ $0
 }
 
 declare PASSWORD=''  # must be defined
+declare DRYRUN=N
 
-while getopts d:u:n:t:s:o:p:h arg
+while getopts d:u:n:t:s:o:p:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -38,6 +40,7 @@ do
 		s) TBS_NAME=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
 		p) PASSWORD="$OPTARG";;
+		r) DRYRUN=Y;;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -120,6 +123,16 @@ SQLPLUS=$ORACLE_HOME/bin/sqlplus
 
 printf "Creating STATS_TABLE: %s\n" $TABLE_NAME
 printf "  Database: %s \n  Schema: %s \n  Tablespace: %s\n" $DATABASE $USERNAME $TBS_NAME
+
+[[ $DRYRUN == 'Y' ]] && {
+	echo
+	for re in "${VALID_ARGS[@]}}"
+	do
+		echo REGEX: $re
+	done
+	echo
+	exit
+}
 
 # get password from database
 PASSWORD=$(getPassword $PASSWORD)

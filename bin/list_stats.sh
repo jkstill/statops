@@ -22,6 +22,7 @@ a table created via DBMS_STATS.CREATE_STAT_TABLE
 -n owner        - owner of statistics table
 -t table_name   - statistics table to list from
                   as created by dbms_stats.create_stat_table
+-r dryrun       - show VALID_ARGS and exit without running the job
 
 -s schema       - schema name for which to list statistics - defaults to %s
 
@@ -42,8 +43,9 @@ a table created via DBMS_STATS.CREATE_STAT_TABLE
 }
 
 declare PASSWORD=''  # must be defined
+declare DRYRUN=N
 
-while getopts d:u:p:n:b:l:t:s:o:h arg
+while getopts d:u:p:n:b:l:t:s:o:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -55,6 +57,7 @@ do
 		b) OBJECT=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
 		p) PASSWORD="$OPTARG";;
+		r) DRYRUN=Y;;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -145,6 +148,16 @@ SQLPLUS=$ORACLE_HOME/bin/sqlplus
 
 printf "Exporting Schema Stats for: %s\n" $SCHEMA
 printf "  Database: %s \n  Table: %s \n\n" $DATABASE $TABLE_NAME 
+
+[[ $DRYRUN == 'Y' ]] && {
+	echo
+	for re in "${VALID_ARGS[@]}}"
+	do
+		echo REGEX: $re
+	done
+	echo
+	exit
+}
 
 PASSWORD=$(getPassword $PASSWORD)
 

@@ -14,7 +14,8 @@ $0
 -d database   - database of schema to be analyzed
 -s schema     - schema to be analyzed
 -u username   - username used to run dbms_stats
--p password     - the user is prompted for password if not set on the command line
+-p password   - the user is prompted for password if not set on the command line
+-r dryrun     - show VALID_ARGS and exit without running the job
 -t time       - analyzes stats when more than N days old
                 this may be a decimal value eg. 0.0007 is 1 minute
                 defaults to 14 days
@@ -29,8 +30,9 @@ See the gather_schema_stats.sql script for details.
 }
 
 declare PASSWORD=''  # must be defined
+declare DRYRUN=N
 
-while getopts d:u:t:s:o:p:t:p:h arg
+while getopts d:u:t:s:o:p:t:p:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -39,6 +41,7 @@ do
 		s) SCHEMA=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
 		p) PASSWORD="$OPTARG";;
+		r) DRYRUN=Y;;
 		t) DAYS_OLD=$OPTARG;;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
@@ -134,6 +137,16 @@ SQLPLUS=$ORACLE_HOME/bin/sqlplus
 printf "Gathering Statistics for Schema: %s\n" $SCHEMA
 printf "  Database: %s \n" $DATABASE 
 printf "  Parallel: %s \n\n" $DEGREE 
+
+[[ $DRYRUN == 'Y' ]] && {
+	echo
+	for re in "${VALID_ARGS[@]}}"
+	do
+		echo REGEX: $re
+	done
+	echo
+	exit
+}
 
 # get password from database
 PASSWORD=$(getPassword $PASSWORD)

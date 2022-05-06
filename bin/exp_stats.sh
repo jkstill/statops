@@ -23,6 +23,7 @@ an EXP file using the Oracle EXP utility
 -s schema      - schema for which to export stats
                  may use SQL wild cards - defaults to all
 					  use 'system' to get system stats
+-r dryrun      - get NLS info - show VALID_ARGS and exit without running the job
 -t table_name  - name of stats table
 
 create an exp dump of an oracle stats table
@@ -31,8 +32,9 @@ create an exp dump of an oracle stats table
 }
 
 declare PASSWORD=''  # must be defined
+declare DRYRUN=N
 
-while getopts d:u:i:n:t:o:p:s:h arg
+while getopts d:u:i:n:t:o:p:s:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -43,6 +45,7 @@ do
 		s) SCHEMA=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
 		p) PASSWORD="$OPTARG";;
+		r) DRYRUN=Y;;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -165,6 +168,16 @@ expLogFile=$(echo $expLogFile | $SED -e 's/%_//g' )
 
 echo expLogFile: $expLogFile
 echo expDmpFile: $expDmpFile
+
+[[ $DRYRUN == 'Y' ]] && {
+	echo
+	for re in "${VALID_ARGS[@]}}"
+	do
+		echo REGEX: $re
+	done
+	echo
+	exit
+}
 
 $EXP userid="${USERNAME}/${PASSWORD}@${DATABASE}" \
 	file="$expDmpFile" \

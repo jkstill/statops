@@ -20,6 +20,8 @@ $0
 
 -n owner       - owner of stats table
 
+-r dryrun      - show VALID_ARGS and exit without running the job
+
 -t table_name  - statistics table to import to 
                  as created by dbms_stats.create_stat_table
 
@@ -36,8 +38,9 @@ Note: gather_fixed_objects_stats gathers statistics to the statistics table.
 }
 
 declare PASSWORD=''  # must be defined
+declare DRYRUN=N
 
-while getopts d:u:t:n:v:o:p:T:h arg
+while getopts d:u:t:n:v:o:p:T:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -47,6 +50,7 @@ do
 		v) NOINVALIDATE=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
 		p) PASSWORD="$OPTARG";;
+		r) DRYRUN=Y;;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -151,6 +155,16 @@ SQLPLUS=$ORACLE_HOME/bin/sqlplus
 
 printf "Gathering Fixed Objects Stats\n"
 printf "  Database: %s \n  Table: %s \n\n" $DATABASE $TABLE_NAME 
+
+[[ $DRYRUN == 'Y' ]] && {
+	echo
+	for re in "${VALID_ARGS[@]}}"
+	do
+		echo REGEX: $re
+	done
+	echo
+	exit
+}
 
 # get password from database
 PASSWORD=$(getPassword $PASSWORD)

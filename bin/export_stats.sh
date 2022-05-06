@@ -29,6 +29,8 @@ This table can be created with the create_stat_table.sh script
 
 -n owner        - owner of stats table in -t 
 
+-r dryrun       - show VALID_ARGS and exit without running the job
+
 -t table_name   - statistics table to export to 
                   as created by dbms_stats.create_stat_table
 
@@ -48,6 +50,9 @@ sysdate will be the stat_id suffix
 "
 }
 
+declare PASSWORD=''  # must be defined
+declare DRYRUN=N
+
 while getopts d:u:t:n:s:o:p:T:h arg
 do
 	case $arg in
@@ -59,6 +64,7 @@ do
 		T) STATS_TYPE=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
 		p) PASSWORD="$OPTARG";;
+		r) DRYRUN=Y;;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -147,6 +153,16 @@ SQLPLUS=$ORACLE_HOME/bin/sqlplus
 
 printf "Exporting Schema Stats for: %s\n" $SCHEMA
 printf "  Database: %s \n  Table: %s \n\n" $DATABASE $TABLE_NAME 
+
+[[ $DRYRUN == 'Y' ]] && {
+	echo
+	for re in "${VALID_ARGS[@]}}"
+	do
+		echo REGEX: $re
+	done
+	echo
+	exit
+}
 
 # get password from database
 PASSWORD=$(getPassword $PASSWORD)

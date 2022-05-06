@@ -19,6 +19,7 @@ an EXP file to a statistics table using the Oracle IMP utility.
 -u username     - account to login with
 -p password     - the user is prompted for password if not set on the command line
 -f import_file  - file to import
+-r dryrun      - show VALID_ARGS and exit without running the job
 -F fromuser     - fromuser argument for Oracle imp
 -T touser       - touser argument for Oracle imp
 
@@ -27,8 +28,9 @@ an EXP file to a statistics table using the Oracle IMP utility.
 }
 
 declare PASSWORD=''  # must be defined
+declare DRYRUN=N
 
-while getopts d:u:f:o:p:s:F:T:h arg
+while getopts d:u:f:o:p:s:F:T:hr arg
 do
 	case $arg in
 		d) DATABASE=$OPTARG;;
@@ -36,6 +38,7 @@ do
 		f) IMPORT_FILE=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
 		p) PASSWORD="$OPTARG";;
+		r) DRYRUN=Y;;
 		F) FROMUSER=$OPTARG;;
 		T) TOUSER=$OPTARG;;
 		h) usage;exit;;
@@ -118,8 +121,17 @@ IMP=$ORACLE_HOME/bin/imp
 printf "export STATS_TABLE: %s\n" $TABLE_NAME
 printf "  Database: %s \n  Schema: %s \n" $DATABASE $USERNAME
 
-# get password from database
+[[ $DRYRUN == 'Y' ]] && {
+	echo
+	for re in "${VALID_ARGS[@]}}"
+	do
+		echo REGEX: $re
+	done
+	echo
+	exit
+}
 
+# get password from database
 PASSWORD=$(getPassword $PASSWORD)
 
 set SQLPATH_OLD=$SQLPATH

@@ -34,6 +34,8 @@ import of statistics via imp_stats.sh
 
 -n owner       - owner of stats table
 
+-r dryrun      - show VALID_ARGS and exit without running the job
+
 -t table_name  - statistics table to import from 
                  as created by dbms_stats.create_stat_table
 
@@ -57,8 +59,9 @@ import of statistics via imp_stats.sh
 }
 
 declare PASSWORD=''  # must be defined
+declare DRYRUN=N
 
-while getopts d:u:i:n:f:v:t:s:o:T:h arg
+while getopts d:u:i:n:f:v:t:s:o:T:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -72,6 +75,7 @@ do
 		f) FORCE_IMPORT=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
 		p) PASSWORD="$OPTARG";;
+		r) DRYRUN=Y;;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -187,6 +191,16 @@ SQLPLUS=$ORACLE_HOME/bin/sqlplus
 
 printf "Importing Schema Stats for: %s  statid: \n" $SCHEMA $STATID
 printf "  Database: %s \n  Table: %s \n\n" $DATABASE $TABLE_NAME 
+
+[[ $DRYRUN == 'Y' ]] && {
+	echo
+	for re in "${VALID_ARGS[@]}}"
+	do
+		echo REGEX: $re
+	done
+	echo
+	exit
+}
 
 # get password from database
 PASSWORD=$(getPassword $PASSWORD)
