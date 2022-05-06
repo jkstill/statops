@@ -1,8 +1,10 @@
 #!/bin/bash
 
 DEBUG=0
-FUNCTIONS_FILE=/home/jkstill/bin/functions.sh; export FUNCTIONS_FILE
-. $FUNCTIONS_FILE
+
+# must start in the statops directory
+[ $(basename $(pwd)) == 'statops' ] || { echo "please start from the statops directory"; exit 1; }
+source bin/bootstrap.sh || { echo "could not source bootstrap.sh"; exit 1; }
 
 function usage {
 	printf "
@@ -14,6 +16,7 @@ an EXP file using the Oracle EXP utility
 -o ORACLE_SID  - used to set local oracle environment
 -d database    - database where stats table resides
 -u username    - database logon account
+-p password    - the user is prompted for password if not set on the command line
 -n owner       - owner of stats table
 -i statid      - optional parameter to specify statid
                  this may use SQL wildcards
@@ -27,7 +30,9 @@ create an exp dump of an oracle stats table
 "
 }
 
-while getopts d:u:i:n:t:o:s:h arg
+declare PASSWORD=''  # must be defined
+
+while getopts d:u:i:n:t:o:p:s:h arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -37,6 +42,7 @@ do
 		i) STATID=$OPTARG;;
 		s) SCHEMA=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
+		p) PASSWORD="$OPTARG";;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -123,8 +129,7 @@ printf "  Database: %s \n  Schema: %s \n" $DATABASE $USERNAME
 
 # get password from database
 
-PASSWORD=$(getPassword $USERNAME $DATABASE)
-PASSWORD='"'$PASSWORD'"' # quoted for special characters
+PASSWORD=$(getPassword $PASSWORD)
 
 set SQLPATH_OLD=$SQLPATH
 unset SQLPATH
@@ -148,9 +153,22 @@ EOF
 
 echo NLS_LANG: $NLS_LANG
 
+# remove any slashes from database name
+declare expDbFileName=$( echo $DATABASE | $TR '/' '-' )
+mkdir -p logs dmp
+
+declare expDmpFile=dmp/${OWNER}_${expDbFileName}_${STATID}_${SCHEMA}_stats.dmp
+expDmpFile=$(echo $expDmpFile | $SED -e 's/%_//g' )
+
+declare expLogFile=logs/${OWNER}_${expDbFileName}_stats_${STATID}_${SCHEMA}_exp.log
+expLogFile=$(echo $expLogFile | $SED -e 's/%_//g' )
+
+echo expLogFile: $expLogFile
+echo expDmpFile: $expDmpFile
+
 $EXP userid="${USERNAME}/${PASSWORD}@${DATABASE}" \
-	file=${OWNER}_${DATABASE}_${STATID}_${SCHEMA}_stats.dmp \
-	log=${OWNER}_${DATABASE}_stats_${STATID}_${SCHEMA}_exp.log \
+	file="$expDmpFile" \
+	log="$expLogFile" \
 	tables=\("$OWNER"."$TABLE_NAME"\) \
 	query=\"where statid like \'${STATID}\'\ and decode\(c5,null,\'SYSTEM\',c5\) like \'${SCHEMA}\'\" \
 	statistics=none triggers=n constraints=n grants=n indexes=n

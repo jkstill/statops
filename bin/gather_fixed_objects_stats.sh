@@ -1,8 +1,10 @@
 #!/bin/bash
 
 DEBUG=0
-FUNCTIONS_FILE=/home/jkstill/bin/functions.sh; export FUNCTIONS_FILE
-. $FUNCTIONS_FILE
+
+# must start in the statops directory
+[ $(basename $(pwd)) == 'statops' ] || { echo "please start from the statops directory"; exit 1; }
+source bin/bootstrap.sh || { echo "could not source bootstrap.sh"; exit 1; }
 
 function usage {
 	printf "
@@ -13,6 +15,8 @@ $0
 -d database    - database to gather fixed objects statistics on
 
 -u username    - user to logon as
+
+-p password     - the user is prompted for password if not set on the command line
 
 -n owner       - owner of stats table
 
@@ -31,7 +35,9 @@ Note: gather_fixed_objects_stats gathers statistics to the statistics table.
 "
 }
 
-while getopts d:u:t:n:v:o:T:h arg
+declare PASSWORD=''  # must be defined
+
+while getopts d:u:t:n:v:o:p:T:h arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -40,6 +46,7 @@ do
 		t) TABLE_NAME=$OPTARG;;
 		v) NOINVALIDATE=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
+		p) PASSWORD="$OPTARG";;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -146,7 +153,7 @@ printf "Gathering Fixed Objects Stats\n"
 printf "  Database: %s \n  Table: %s \n\n" $DATABASE $TABLE_NAME 
 
 # get password from database
-PASSWORD=$(getPassword $USERNAME $DATABASE)
+PASSWORD=$(getPassword $PASSWORD)
 
 set SQLPATH_OLD=$SQLPATH
 unset SQLPATH

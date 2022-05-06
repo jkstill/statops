@@ -1,8 +1,10 @@
 #!/bin/bash
 
 DEBUG=0
-FUNCTIONS_FILE=/home/jkstill/bin/functions.sh; export FUNCTIONS_FILE
-. $FUNCTIONS_FILE
+
+# must start in the statops directory
+[ $(basename $(pwd)) == 'statops' ] || { echo "please start from the statops directory"; exit 1; }
+source bin/bootstrap.sh || { echo "could not source bootstrap.sh"; exit 1; }
 
 function usage {
 	printf "
@@ -12,6 +14,7 @@ $0
 -d database   - database of schema to be analyzed
 -s schema     - schema to be analyzed
 -u username   - username used to run dbms_stats
+-p password     - the user is prompted for password if not set on the command line
 -t time       - analyzes stats when more than N days old
                 this may be a decimal value eg. 0.0007 is 1 minute
                 defaults to 14 days
@@ -25,7 +28,9 @@ See the gather_schema_stats.sql script for details.
 
 }
 
-while getopts d:u:t:s:o:t:p:h arg
+declare PASSWORD=''  # must be defined
+
+while getopts d:u:t:s:o:p:t:p:h arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -33,6 +38,7 @@ do
 		p) DEGREE=$OPTARG;;
 		s) SCHEMA=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
+		p) PASSWORD="$OPTARG";;
 		t) DAYS_OLD=$OPTARG;;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
@@ -130,7 +136,7 @@ printf "  Database: %s \n" $DATABASE
 printf "  Parallel: %s \n\n" $DEGREE 
 
 # get password from database
-PASSWORD=$(getPassword $USERNAME $DATABASE)
+PASSWORD=$(getPassword $PASSWORD)
 
 set SQLPATH_OLD=$SQLPATH
 unset SQLPATH

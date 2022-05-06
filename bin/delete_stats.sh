@@ -1,24 +1,22 @@
 #!/bin/bash
 
 DEBUG=0
-FUNCTIONS_FILE=/home/jkstill/bin/functions.sh; export FUNCTIONS_FILE
-. $FUNCTIONS_FILE
+
+# must start in the statops directory
+[ $(basename $(pwd)) == 'statops' ] || { echo "please start from the statops directory"; exit 1; }
+source bin/bootstrap.sh || { echo "could not source bootstrap.sh"; exit 1; }
 
 function usage {
 	printf "
 $0  deletes statistics from the stats table or the dictionary.
 
 -o ORACLE_SID - ORACLE_SID used to set local oracle environment
-
 -d database    - database to delete statistics from
-
 -u username    - user to logon as
-
+-p password    - the user is prompted for password if not set on the command line
 -n owner       - owner of the stats table specified by -t
-
 -t table_name  - statistics table to delete from
                  as created by dbms_stats.create_stat_table
-
 -i statid      - statid of stats to delete
 
 if both -t table_name and -i statid are NOT specified on the command
@@ -46,7 +44,9 @@ Make sure you are using these options correctly!
 "
 }
 
-while getopts d:u:s:o:n:t:i:v:f:T:h arg
+declare PASSWORD=''  # must be defined
+
+while getopts d:u:s:o:n:t:i:v:f:T:p:h arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -59,6 +59,7 @@ do
 		v) NOINVALIDATE=$OPTARG;;
 		f) FORCE_DELETE=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
+		p) PASSWORD="$OPTARG";;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -190,7 +191,7 @@ printf "Deleting Schema Stats for: %s  statid: \n" $SCHEMA $STATID
 printf "  Database: %s \n  Table: %s \n\n" $DATABASE $TABLE_NAME 
 
 # get password from database
-PASSWORD=$(getPassword $USERNAME $DATABASE)
+PASSWORD=$(getPassword $PASSWORD)
 
 set SQLPATH_OLD=$SQLPATH
 unset SQLPATH

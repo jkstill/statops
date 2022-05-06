@@ -1,8 +1,10 @@
 #!/bin/bash
 
 DEBUG=0
-FUNCTIONS_FILE=/home/jkstill/bin/functions.sh; export FUNCTIONS_FILE
-. $FUNCTIONS_FILE
+
+# must start in the statops directory
+[ $(basename $(pwd)) == 'statops' ] || { echo "please start from the statops directory"; exit 1; }
+source bin/bootstrap.sh || { echo "could not source bootstrap.sh"; exit 1; }
 
 function usage {
 	printf "
@@ -16,6 +18,7 @@ $0
 -o ORACLE_SID      - this is used to set the oracle environment
 -d database        - database the stats table will be created in
 -u username        - username to logon with
+-p password        - the user is prompted for password if not set on the command line
 -n owner           - owner of the stats table
 -t table_name      - name of the stats table to create
 -s tablespace_name - tablespace name in which to create the stats table
@@ -23,7 +26,9 @@ $0
 "
 }
 
-while getopts d:u:n:t:s:o:h arg
+declare PASSWORD=''  # must be defined
+
+while getopts d:u:n:t:s:o:p:h arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -32,6 +37,7 @@ do
 		t) TABLE_NAME=$OPTARG;;
 		s) TBS_NAME=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
+		p) PASSWORD="$OPTARG";;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -116,7 +122,7 @@ printf "Creating STATS_TABLE: %s\n" $TABLE_NAME
 printf "  Database: %s \n  Schema: %s \n  Tablespace: %s\n" $DATABASE $USERNAME $TBS_NAME
 
 # get password from database
-PASSWORD=$(getPassword $USERNAME $DATABASE)
+PASSWORD=$(getPassword $PASSWORD)
 
 set SQLPATH_OLD=$SQLPATH
 unset SQLPATH

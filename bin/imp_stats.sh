@@ -1,8 +1,10 @@
 #!/bin/bash
 
 DEBUG=0
-FUNCTIONS_FILE=/home/jkstill/bin/functions.sh; export FUNCTIONS_FILE
-. $FUNCTIONS_FILE
+
+# must start in the statops directory
+[ $(basename $(pwd)) == 'statops' ] || { echo "please start from the statops directory"; exit 1; }
+source bin/bootstrap.sh || { echo "could not source bootstrap.sh"; exit 1; }
 
 function usage {
 	printf "
@@ -15,6 +17,7 @@ an EXP file to a statistics table using the Oracle IMP utility.
 -o ORACLE_SID   - used to set local oracle environment
 -d database     - data where the import table resides
 -u username     - account to login with
+-p password     - the user is prompted for password if not set on the command line
 -f import_file  - file to import
 -F fromuser     - fromuser argument for Oracle imp
 -T touser       - touser argument for Oracle imp
@@ -23,13 +26,16 @@ an EXP file to a statistics table using the Oracle IMP utility.
 
 }
 
-while getopts d:u:f:o:s:F:T:h arg
+declare PASSWORD=''  # must be defined
+
+while getopts d:u:f:o:p:s:F:T:h arg
 do
 	case $arg in
 		d) DATABASE=$OPTARG;;
 		u) USERNAME=$OPTARG;;
 		f) IMPORT_FILE=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
+		p) PASSWORD="$OPTARG";;
 		F) FROMUSER=$OPTARG;;
 		T) TOUSER=$OPTARG;;
 		h) usage;exit;;
@@ -114,8 +120,7 @@ printf "  Database: %s \n  Schema: %s \n" $DATABASE $USERNAME
 
 # get password from database
 
-PASSWORD=$(getPassword $USERNAME $DATABASE)
-PASSWORD='"'$PASSWORD'"' # quoted for special characters
+PASSWORD=$(getPassword $PASSWORD)
 
 set SQLPATH_OLD=$SQLPATH
 unset SQLPATH

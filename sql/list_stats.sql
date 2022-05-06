@@ -20,6 +20,7 @@ col dlevel new_value dlevel noprint
 col schema_name new_value schema_name noprint
 col owner format a30
 col statid format a30
+col column_name format a30
 
 set term on
 prompt Stats Table Owner:

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 DEBUG=0
-FUNCTIONS_FILE=/home/jkstill/bin/functions.sh; export FUNCTIONS_FILE
-. $FUNCTIONS_FILE
+
+# must start in the statops directory
+[ $(basename $(pwd)) == 'statops' ] || { echo "please start from the statops directory"; exit 1; }
+source bin/bootstrap.sh || { echo "could not source bootstrap.sh"; exit 1; }
 
 function usage {
 	printf "
@@ -16,6 +18,7 @@ a table created via DBMS_STATS.CREATE_STAT_TABLE
 
 -d database     - database where stats table is found
 -u username     - username to logon with
+-p password     - the user is prompted for password if not set on the command line
 -n owner        - owner of statistics table
 -t table_name   - statistics table to list from
                   as created by dbms_stats.create_stat_table
@@ -38,7 +41,9 @@ a table created via DBMS_STATS.CREATE_STAT_TABLE
 " '%' '%' '%'
 }
 
-while getopts d:u:n:b:l:t:s:o:h arg
+declare PASSWORD=''  # must be defined
+
+while getopts d:u:p:n:b:l:t:s:o:h arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -49,6 +54,7 @@ do
 		s) SCHEMA=$OPTARG;;
 		b) OBJECT=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
+		p) PASSWORD="$OPTARG";;
 		h) usage;exit;;
 		*) echo "invalid argument specified"; usage;exit 1;
 	esac
@@ -140,12 +146,7 @@ SQLPLUS=$ORACLE_HOME/bin/sqlplus
 printf "Exporting Schema Stats for: %s\n" $SCHEMA
 printf "  Database: %s \n  Table: %s \n\n" $DATABASE $TABLE_NAME 
 
-# get password from database
-PASSWORD=$(getPassword $USERNAME $DATABASE)
-
-# get password on command line if blank
-# returns if password already set
-getPasswordInteractive 'PASSWORD'
+PASSWORD=$(getPassword $PASSWORD)
 
 set SQLPATH_OLD=$SQLPATH
 unset SQLPATH
