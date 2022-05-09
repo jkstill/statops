@@ -378,6 +378,7 @@ function validate_args {
 
 		# was grep -E. changed to -P as some regexes did not work with -E 
 		if [ $(echo "$arglist" | $GREP -P "$1" ) ]; then
+			echo MATCHED
 			return 0
 		else 
 			echo "NO MATCH"
