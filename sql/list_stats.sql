@@ -19,8 +19,10 @@ col get_object new_value get_object noprint
 col dlevel new_value dlevel noprint
 col schema_name new_value schema_name noprint
 col owner format a30
+col v_statid new_value v_statid 
 col statid format a30
 col column_name format a30
+
 
 set term on
 prompt Stats Table Owner:
@@ -55,6 +57,11 @@ set term on feed on
 prompt Object Name (wildcards OK) ?
 set term off
 select '&5' get_object from dual;
+set term on feed on
+
+prompt Statid? 
+set term off
+select '&6' v_statid from dual;
 set term on feed on
 
 var object_name varchar2(30)
@@ -102,6 +109,7 @@ where
 		union all
 		select decode('&&skip_column','--','S','C') from dual
 	)
+	and st.statid like '&&v_statid'
 	-- check st.type and st.c5 so that SYSTEM statistics will be listed
 	&&skip_partition and st.c2 is not null or ( st.type = 'S' and st.c5 is null )
 	&&skip_owner and st.c5 like :schema_name  or ( st.type = 'S' and st.c5 is null )

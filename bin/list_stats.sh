@@ -7,7 +7,7 @@ DEBUG=0
 source bin/bootstrap.sh || { echo "could not source bootstrap.sh"; exit 1; }
 
 function usage {
-	printf "
+cat <<-EOF
 $0 
 
 List statistics that have been saved with export_stats.sh
@@ -24,12 +24,13 @@ a table created via DBMS_STATS.CREATE_STAT_TABLE
                   as created by dbms_stats.create_stat_table
 -r dryrun       - show VALID_ARGS and exit without running the job
 
--s schema       - schema name for which to list statistics - defaults to %s
+-i              - statid of statistics set - defaults to %
+-s schema       - schema name for which to list statistics - defaults to %
 
--b              - object name to search for - table or index name - defaults to %s
+-b              - object name to search for - table or index name - defaults to %
                   SQL wild cards allowed 
                   quote wild cards if used
-                  the only valid object name for levels 1 and 2 is %s
+                  the only valid object name for levels 1 and 2 is %
 
 -l level        - level of detail to show - defaults to 2
                   MUST be 3 or greater if -s and/or -b are used
@@ -39,13 +40,13 @@ a table created via DBMS_STATS.CREATE_STAT_TABLE
                   4=statid, owners, type, name and partition
                   5=statid, owners, type, name and column
 
-" '%' '%' '%'
+EOF
 }
 
 declare PASSWORD=''  # must be defined
 declare DRYRUN=N
 
-while getopts d:u:p:n:b:l:t:s:o:hr arg
+while getopts d:u:p:n:b:l:t:s:i:o:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -53,6 +54,7 @@ do
 		n) OWNER=$OPTARG;;
 		t) TABLE_NAME=$OPTARG;;
 		l) DLEVEL=$OPTARG;;
+		i) STATID=$OPTARG;;
 		s) SCHEMA=$OPTARG;;
 		b) OBJECT=$OPTARG;;
 		o) ORACLE_SID=$OPTARG;;
@@ -78,10 +80,11 @@ chkForEmptyArgs ":$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$DLEVEL:$SCHEMA:$OBJECT
 [ -z "$OBJECT" ] && OBJECT='%'
 # default schema
 [ -z "$SCHEMA" ] && SCHEMA='%'
+[ -z "$STATID" ] && STATID='%'
 
 # argument validation section 
 # concat all args together
-ALLARGS=":$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$DLEVEL:$SCHEMA:$OBJECT:$ORACLE_SID:"
+ALLARGS=":$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$DLEVEL:$SCHEMA:$STATID:$OBJECT:$ORACLE_SID:"
 # upper case args
 ALLARGS=$(upperCase $ALLARGS)
 
@@ -93,6 +96,7 @@ export DATABASE_RE='[[:punct:][:alnum:]]{3,}'
 export OWNER_RE='[[:alnum:]_$]+'
 export TABLE_RE='[[:alnum:]_#$]+'
 export OBJECT_RE='[[:alnum:]_#$%]+'
+export STATID_RE='[[:alnum:][:punct:]]+'
 export OBJECT_RE='*'
 export DLEVEL_RE1='[1-5]{1}'
 export DLEVEL_RE2='[2-5]{1}'
@@ -110,8 +114,8 @@ export SCHEMA_RE='*'
 
 # :$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$DLEVEL:$SCHEMA:$OBJECT:$ORACLE_SID:
 declare -a VALID_ARGS=(
-":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$DLEVEL_RE2:$SCHEMA_RE:$OBJECT_RE:$DATABASE_RE:"
-":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$DLEVEL_RE1:%:%:$DATABASE_RE:"
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$DLEVEL_RE2:$SCHEMA_RE:$STATID_RE:$OBJECT_RE:$DATABASE_RE:"
+":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$DLEVEL_RE1:%:%:%:$DATABASE_RE:"
 )
 
 validate_args "$ALLARGS" "${VALID_ARGS[@]}"
@@ -166,11 +170,11 @@ unset SQLPATH
 
 SQL_SCRIPT=$SQLDIR/list_stats.sql
 
-echo LIST: $SQL_SCRIPT $OWNER $TABLE_NAME $DLEVEL $OBJECT
+echo LIST: $SQL_SCRIPT $OWNER $TABLE_NAME $DLEVEL $OBJECT $STATID
 
 $SQLPLUS /nolog <<-EOF
 connect $USERNAME/"$PASSWORD"@$DATABASE
-@$SQL_SCRIPT $OWNER $TABLE_NAME $DLEVEL $SCHEMA $OBJECT
+@$SQL_SCRIPT $OWNER $TABLE_NAME $DLEVEL $SCHEMA $OBJECT $STATID
 EOF
 
 set SQLPATH=$SQLPATH_OLD
