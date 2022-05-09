@@ -131,7 +131,7 @@ export TABLE_RE='[[:alnum:]_#$]+'
 export SCHEMA_RE='[[:alnum:]_$]+'
 export NOINV_RE='([YyNn]|YES|yes|NO|no)'
 export FORCE_RE='([YyNn]|YES|yes|NO|no)'
-export STATID_RE='[[:alnum:]_$]+'
+export STATID_RE='[[:alnum:][:punct:]]+'
 
 # bash
 # order of argument regexs

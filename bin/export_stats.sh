@@ -53,7 +53,7 @@ sysdate will be the stat_id suffix
 declare PASSWORD=''  # must be defined
 declare DRYRUN=N
 
-while getopts d:u:t:n:s:o:p:T:h arg
+while getopts d:u:t:n:s:o:p:T:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
@@ -102,7 +102,7 @@ export SCHEMA_RE='[[:alnum:]_$]+'
 # order of argument regexs
 # export non-schema stats to table
 # delete schema stats to table
-declare -a VALID_ARGS=(":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE::(DICTIONARY_STATS|SYSTEM_STATS|FIXED_OBJECTS_STATS):$DATABASE_RE:"
+declare -a VALID_ARGS=(":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:(DICTIONARY_STATS|SYSTEM_STATS|FIXED_OBJECTS_STATS):$DATABASE_RE:"
 	":$USER_RE:$DATABASE_RE:$OWNER_RE:$TABLE_RE:$SCHEMA_RE:(SCHEMA):$DATABASE_RE:")
 
 validate_args "$ALLARGS" "${VALID_ARGS[@]}"
