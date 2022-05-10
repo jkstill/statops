@@ -22,12 +22,13 @@ a table created via DBMS_STATS.CREATE_STAT_TABLE
 -n owner        - owner of statistics table
 -t table_name   - statistics table to list from
                   as created by dbms_stats.create_stat_table
+-e              - detailed report - currently tables/indexes only
 -r dryrun       - show VALID_ARGS and exit without running the job
 
--i              - statid of statistics set - defaults to %
+-i statid       - statid of statistics set - defaults to %
 -s schema       - schema name for which to list statistics - defaults to %
 
--b              - object name to search for - table or index name - defaults to %
+-b object name  - object name to search for - table or index name - defaults to %
                   SQL wild cards allowed 
                   quote wild cards if used
                   the only valid object name for levels 1 and 2 is %
@@ -46,11 +47,12 @@ EOF
 declare PASSWORD=''  # must be defined
 declare DRYRUN=N
 
-while getopts d:u:p:n:b:l:t:s:i:o:hr arg
+while getopts d:u:p:n:b:l:t:s:i:o:ehr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
 		d) DATABASE=$OPTARG;;
+		e) DETAILS=Y;;
 		n) OWNER=$OPTARG;;
 		t) TABLE_NAME=$OPTARG;;
 		l) DLEVEL=$OPTARG;;
@@ -81,6 +83,7 @@ chkForEmptyArgs ":$USERNAME:$DATABASE:$OWNER:$TABLE_NAME:$DLEVEL:$SCHEMA:$OBJECT
 # default schema
 [ -z "$SCHEMA" ] && SCHEMA='%'
 [ -z "$STATID" ] && STATID='%'
+[ -z "$DETAILS" ] && DETAILS='N'
 
 # argument validation section 
 # concat all args together
@@ -150,7 +153,7 @@ export ORAENV_ASK=NO
 
 SQLPLUS=$ORACLE_HOME/bin/sqlplus
 
-printf "Exporting Schema Stats for: %s\n" $SCHEMA
+printf "Listing Schema Stats for: %s\n" $SCHEMA
 printf "  Database: %s \n  Table: %s \n\n" $DATABASE $TABLE_NAME 
 
 [[ $DRYRUN == 'Y' ]] && {
@@ -168,14 +171,27 @@ PASSWORD=$(getPassword $PASSWORD)
 set SQLPATH_OLD=$SQLPATH
 unset SQLPATH
 
-SQL_SCRIPT=$SQLDIR/list_stats.sql
+if [[ $DETAILS == 'Y' ]]; then
+	SQL_SCRIPT_1=$SQLDIR/list_stats_table_details.sql
+	SQL_SCRIPT_2=$SQLDIR/list_stats_index_details.sql
 
-echo LIST: $SQL_SCRIPT $OWNER $TABLE_NAME $DLEVEL $OBJECT $STATID
+	echo DETAILS LIST: $OWNER $TABLE_NAME $DLEVEL $OBJECT $STATID
 
-$SQLPLUS /nolog <<-EOF
-connect $USERNAME/"$PASSWORD"@$DATABASE
-@$SQL_SCRIPT $OWNER $TABLE_NAME $DLEVEL $SCHEMA $OBJECT $STATID
-EOF
+	$SQLPLUS /nolog <<-EOF
+		connect $USERNAME/"$PASSWORD"@$DATABASE
+		@$SQL_SCRIPT_1 $OWNER $TABLE_NAME $SCHEMA $OBJECT $STATID
+		@$SQL_SCRIPT_2 $OWNER $TABLE_NAME $SCHEMA $OBJECT $STATID
+	EOF
+else
+	SQL_SCRIPT=$SQLDIR/list_stats.sql
+	echo LIST: $SQL_SCRIPT $OWNER $TABLE_NAME $DLEVEL $OBJECT $STATID
+
+	$SQLPLUS /nolog <<-EOF
+		connect $USERNAME/"$PASSWORD"@$DATABASE
+		@$SQL_SCRIPT $OWNER $TABLE_NAME $DLEVEL $SCHEMA $OBJECT $STATID
+	EOF
+fi
+
 
 set SQLPATH=$SQLPATH_OLD
 
