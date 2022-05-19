@@ -61,7 +61,7 @@ import of statistics via imp_stats.sh
 declare PASSWORD=''  # must be defined
 declare DRYRUN=N
 
-while getopts d:u:i:n:f:v:t:s:o:T:hr arg
+while getopts d:u:i:n:p:f:v:t:s:o:T:hr arg
 do
 	case $arg in
 		u) USERNAME=$OPTARG;;
