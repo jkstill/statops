@@ -3,16 +3,21 @@
 
 These are scripts I developed some years ago and have just added to my Github Repo.
 
-There are a things that need to be changed to start using them again, but not too much
-
 These are relevant only for scripts in the ./system_stats directory
 
-- remove references to pwc.pl - was once password retrieval
-- remove references in shell scripts to db/server names
+Dependencies removed
 
-There is a dependency on this shell scripts [functions.sh](https://github.com/jkstill/shell-functions/blob/master/functions.sh) which should be copied or linked into the directory structure.
+~~- remove references to pwc.pl - was once password retrieval~~
+~~- remove references in shell scripts to db/server names~~
 
-The FUNCTIONS_FILE variable will then need to be edited in the shell scripts in ./bin.
+
+These scripts now have their own version of functions.sh
+
+~~There is a dependency on this shell scripts [functions.sh](https://github.com/jkstill/shell-functions/blob/master/functions.sh) which should be copied or linked into the directory structure.~~
+
+This is now done automatically.
+
+~~The FUNCTIONS_FILE variable will then need to be edited in the shell scripts in ./bin.~~
 
 
 # directories
@@ -50,17 +55,15 @@ scripts to gather/import/export/set system statistics
 
   SQL scripts used by shell scripts
 
-
-# Export and Import DBMS_STATS
-
-A copy of of [functions.sh](https://github.com/jkstill/shell-functions/blob/master/functions.sh) will be needed for this installation
-
-The FUNCTIONS_FILE variable will then need to be edited in the shell scripts in ./bin.
-
 # Export Database Statistics
 
 ## Create user for Stats table 
-  or use Pythian
+ 
+No scripts are provided for creating a user for the statistics tables.
+
+An existing user may be used, or a new one created.
+
+The scripts are run using an account with DBA privileges, so there are no special requirements for the user owning the tables.
 
 ## Create Stats Table
 
